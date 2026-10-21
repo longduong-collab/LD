@@ -1266,13 +1266,25 @@
     }
 
     @keyframes sourceFloatIdle {
-      0%, 100% { transform: translateY(0) rotate(0); }
-      50% { transform: translateY(calc(-8 * var(--u))) rotate(2.5deg); }
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0);
+      }
+
+      50% {
+        transform: translateY(calc(-8 * var(--u))) rotate(2.5deg);
+      }
     }
 
     @keyframes sourceSpinSlow {
-      from { transform: rotate(0); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .source-layout-slide .slide-top {
@@ -1346,13 +1358,41 @@
       line-height: 1.1;
     }
 
-    .source-layout-slide .tone-diff { background: var(--diff-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--diff-lip); }
-    .source-layout-slide .tone-comp { background: var(--comp-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--comp-lip); }
-    .source-layout-slide .tone-nov { background: var(--nov-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--nov-lip); }
-    .source-layout-slide .tone-var { background: var(--var-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--var-lip); }
-    .source-layout-slide .tone-good { background: var(--good-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--good-lip); }
-    .source-layout-slide .tone-bad { background: var(--bad-soft); box-shadow: 0 calc(7 * var(--u)) 0 var(--bad-lip); }
-    .source-layout-slide .tone-dark { background: var(--ink); color: #FFF9F0; box-shadow: 0 calc(7 * var(--u)) 0 #564779; }
+    .source-layout-slide .tone-diff {
+      background: var(--diff-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--diff-lip);
+    }
+
+    .source-layout-slide .tone-comp {
+      background: var(--comp-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--comp-lip);
+    }
+
+    .source-layout-slide .tone-nov {
+      background: var(--nov-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--nov-lip);
+    }
+
+    .source-layout-slide .tone-var {
+      background: var(--var-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--var-lip);
+    }
+
+    .source-layout-slide .tone-good {
+      background: var(--good-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--good-lip);
+    }
+
+    .source-layout-slide .tone-bad {
+      background: var(--bad-soft);
+      box-shadow: 0 calc(7 * var(--u)) 0 var(--bad-lip);
+    }
+
+    .source-layout-slide .tone-dark {
+      background: var(--ink);
+      color: #FFF9F0;
+      box-shadow: 0 calc(7 * var(--u)) 0 #564779;
+    }
 
     .source-layout-slide .card-title {
       color: var(--ink);
@@ -2257,7 +2297,7 @@
         short: false,
         steps: ["1. Thích mắt (Entertainment)", "2. Hiểu luật (Learning)", "3. Thử lửa (Challenge)"],
         leftSide: {
-          image: { file: "assets/s04_uncertainty_crop.jpg", caption: "Uncertainty: biết rõ luật, hồi hộp chờ kết quả" },
+          image: { file: "assets/s04_uncertainty_illust.png", caption: "Uncertainty: biết rõ luật, hồi hộp chờ kết quả" },
           tag: "✅ UNCERTAINTY — CÓ LỢI",
           title: "Biết rõ luật, hồi hộp chờ kết quả",
           points: [
@@ -3563,7 +3603,6 @@
                     </div>
                   </div>
                 </div>
-                <div class="vs-badge anim">VS</div>
                 <div class="tile tile-bad s4-card anim">
                   <div class="s4-head">
                     <span class="tag" style="background:#E11D48; color:#FFFFFF;">${s.rightSide.tag}</span>
