@@ -835,6 +835,7 @@
 
       #bottom-bar,
       #progress-track,
+      #elasticCanvas,
       .click-zone,
       #notes-drawer,
       #overview-modal,
@@ -1328,6 +1329,7 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
+      opacity: 0.22;
     }
 
     .slide > .bg-pattern {
@@ -1335,14 +1337,14 @@
       z-index: 0;
     }
 
-    .slide.active .bg-pattern {
-      filter: url(#soft-bulge-filter);
-    }
-
-    @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
-      .slide.active .bg-pattern {
-        filter: none;
-      }
+    .slide > #elasticCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
 
     .source-layout-slide .deco-item {
@@ -2160,26 +2162,10 @@
 </head>
 
 <body>
-  <svg aria-hidden="true" width="0" height="0" style="position:absolute; overflow:hidden;">
-    <defs>
-      <filter id="soft-bulge-filter" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
-        <feImage href="#bulge-displacement-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="bulge-map" />
-        <feDisplacementMap id="bulge-displacement" in="SourceGraphic" in2="bulge-map" scale="0" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
-  <svg id="bulge-displacement-map" aria-hidden="true" width="100" height="100" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:fixed; left:-120px; top:-120px; pointer-events:none;">
-    <defs>
-      <radialGradient id="bulge-displacement-gradient" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="16%">
-        <stop offset="0" stop-color="#FFFFFF" />
-        <stop offset="1" stop-color="#808080" />
-      </radialGradient>
-    </defs>
-    <rect width="100" height="100" fill="url(#bulge-displacement-gradient)" />
-  </svg>
   <div id="viewport">
     <main id="deck-canvas" aria-label="Level Design Foundations">
       <div id="slides-root"></div>
+      <canvas id="elasticCanvas" aria-hidden="true"></canvas>
 
       <div class="click-zone click-zone-left" id="zone-prev" title="Trang trước (←)">
         <div class="zone-pill">‹</div>
@@ -2188,9 +2174,18 @@
         <div class="zone-pill">›</div>
       </div>
 
+      <aside id="notes-drawer" role="region" aria-label="Ghi chú trình bày" aria-live="polite">
+        <div class="notes-header">
+          <span>🎙️ Ghi chú cho người trình bày</span>
+          <button type="button" class="hud-btn" id="btn-close-notes">Đóng (Esc)</button>
+        </div>
+        <div id="notes-content"></div>
+        <div id="notes-bridge" hidden></div>
+      </aside>
+
       <div id="overview-modal" role="dialog" aria-modal="true">
         <div class="overview-top">
-          <h2 id="overview-heading">Bản đồ 32 trang theo 9 chặng</h2>
+          <h2 id="overview-heading">Bản đồ 40 trang theo 9 chặng</h2>
           <div style="display:flex; gap:10px;">
             <button type="button" class="hud-btn" id="btn-ov-short">⚡ Chế độ 15 phút (S)</button>
             <button type="button" class="hud-btn" id="btn-close-overview">Đóng (Esc)</button>
@@ -2209,11 +2204,12 @@
           <button type="button" class="hud-btn" id="btn-prev">←</button>
           <button type="button" class="hud-btn" id="btn-next">→</button>
           <button type="button" class="hud-btn" id="btn-overview" title="Tổng quan (Phím O)">⊞ Bản đồ (O)</button>
-          <button type="button" class="hud-btn" id="btn-short" title="Bản nhanh 14 trang (Phím S)">⚡ Bản 15p
+          <button type="button" class="hud-btn" id="btn-notes" title="Ghi chú trình bày (Phím N)" aria-expanded="false">🎙️ Ghi chú (N)</button>
+          <button type="button" class="hud-btn" id="btn-short" title="Bản nhanh 15 trang (Phím S)">⚡ Bản 15p
             (S)</button>
           <button type="button" class="hud-btn" id="btn-fullscreen" title="Toàn màn hình (Phím F)">⛶</button>
         </div>
-        <div id="slide-counter">1 / 32</div>
+        <div id="slide-counter">1 / 40</div>
       </footer>
 
       <div id="progress-track">
@@ -2401,8 +2397,8 @@
             <li><strong>Công thức tổng quát: <mark>Engagement (Gắn kết) + Heuristics (Mẹo / Chiến lược nhận thức) = Fun</mark>:</strong>
               <br>• <strong>Engagement:</strong> Giữ người chơi đầu tư thời gian, sự chú ý và tâm trí vào bàn cờ.
               <br>• <strong>Heuristics:</strong> Quá trình não bộ tự đúc kết ra các quy luật, mẹo giải quyết vấn đề và cảm giác làm chủ trò chơi (<mark>Mastery</mark>).
-              <br>• <strong>Hệ quả tất yếu:</strong> Khi người chơi đã thuần thục, bài toán cũ sẽ trở nên nhàm chán. Sự thỏa mãn của Mastery thôi thúc họ chủ động tìm bài toán khó hơn $\rightarrow$ <strong>Level bắt buộc phải leo thang đồng nhịp với kỹ năng người chơi!</strong></li>
-            <li><strong>5 động lực tâm lý bổ trợ của dòng Casual/Puzzle (Minh họa trang 8 tài liệu Day 3):</strong> Ngoài việc giải đố thuần túy, người chơi còn tìm kiếm: (1) <mark>Visual completion</mark> (Hoàn tất thị giác), (2) <mark>Relief & tidying</mark> (Giải tỏa & dọn dẹp ngăn nắp), (3) <mark>Low-demand repetition</mark> (Lặp lại nhẹ nhàng kiểu Zen), (4) <mark>Anticipation & reward</mark> (Hồi hộp chờ nổ combo & mở rương), và (5) <mark>Collection</mark> (Sưu tầm đủ bộ).</li>
+              <br>• <strong>Hệ quả tất yếu:</strong> Khi người chơi đã thuần thục, bài toán cũ sẽ trở nên nhàm chán. Sự thỏa mãn của Mastery thôi thúc họ chủ động tìm bài toán khó hơn → <strong>Level bắt buộc phải leo thang đồng nhịp với kỹ năng người chơi!</strong></li>
+            <li><strong>5 động lực tâm lý bổ trợ của dòng Casual/Puzzle:</strong> Ngoài việc giải đố thuần túy, người chơi còn tìm kiếm: (1) <mark>Visual completion</mark> (Hoàn tất thị giác), (2) <mark>Relief & tidying</mark> (Giải tỏa & dọn dẹp ngăn nắp), (3) <mark>Low-demand repetition</mark> (Lặp lại nhẹ nhàng kiểu Zen), (4) <mark>Anticipation & reward</mark> (Hồi hộp chờ nổ combo & mở rương), và (5) <mark>Collection</mark> (Sưu tầm đủ bộ).</li>
           </ul>
         `,
         bridge: "Nhưng để người chơi đi từ chỗ thích thú ban đầu đến chỗ đúc kết được mẹo chơi (Heuristics), ta phải dẫn dắt họ theo đúng thứ tự ưu tiên nào?"
@@ -2438,9 +2434,9 @@
         },
         bottomRule: "🧰 Chuẩn bị đủ đồ nghề điều chỉnh độ khó trước — Áp lực nạp tiền tính từ sớm nhưng luôn gắn vào SAU CÙNG.",
         notes: `
-          <p class="notes-lead">🔗 <strong>Từ công thức Fun đến Lộ trình cảm xúc:</strong> Để người chơi thực sự học được Heuristics như ở Slide 3, hành trình của họ phải đi qua chu kỳ <mark>Engagement (Gắn kết) $\rightarrow$ Motivation (Động lực) $\rightarrow$ Accomplishment (Thành tựu)</mark> theo đúng thứ tự ưu tiên vàng:</p>
+          <p class="notes-lead">🔗 <strong>Từ công thức Fun đến Lộ trình cảm xúc:</strong> Để người chơi thực sự học được Heuristics như ở Slide 3, hành trình của họ phải đi qua chu kỳ <mark>Engagement (Gắn kết) → Motivation (Động lực) → Accomplishment (Thành tựu)</mark> theo đúng thứ tự ưu tiên vàng:</p>
           <ul>
-            <li><strong>Thứ tự ưu tiên thiết kế: <mark>1. Entertainment $\rightarrow$ 2. Learning $\rightarrow$ 3. Challenge</mark>:</strong>
+            <li><strong>Thứ tự ưu tiên thiết kế: <mark>1. Entertainment → 2. Learning → 3. Challenge</mark>:</strong>
               <br>• <strong>Entertainment trước tiên:</strong> Thẩm mỹ (Aesthetics) và cảm giác chạm/nổ (Feel) phải cuốn hút ngay từ giây đầu.
               <br>• <strong>Learning tiếp theo:</strong> Tutorial và cách gợi mở luật chơi phải trực quan, nhìn là hiểu.
               <br>• <strong>Challenge sau cùng:</strong> Chỉ khi người chơi đã thích và đã hiểu luật, thử thách mới mang lại giá trị.</li>
@@ -2462,7 +2458,7 @@
         short: false,
         image: { file: "assets/player_journey_flow.jpg", caption: "Hành trình người chơi & Kênh Flow (The Flow Channel & Player Tolerance Zone)" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Cái bẫy phổ biến nhất khi nghĩ về tiến trình (Trang 10 Day 3 & Flow Theory):</strong> Gộp mọi thứ vào hai chữ "Độ khó".</p>
+          <p class="notes-lead">🔗 <strong>Cái bẫy phổ biến nhất khi nghĩ về tiến trình:</strong> Gộp mọi thứ vào hai chữ "Độ khó".</p>
           <ul>
             <li><strong>Hệ lụy của tư duy 1 núm vặn:</strong> Một khi đã nghĩ như vậy, mọi nhu cầu mới của người chơi đều bị trả lời bằng cách làm level khó hơn, và các yếu tố căng thẳng cứ thế chồng chất lên nhau.</li>
             <li><strong>Khái niệm Kênh Flow & Vùng chịu đựng (Tolerance Zone):</strong> 
@@ -2484,7 +2480,7 @@
         title: "Khung 4 đòn bẩy: Bàn điều khiển thay cho 1 núm vặn",
         layout: "s05_mixer_levers",
         short: true,
-        image: { file: "assets/p017_mixer_levers.jpg", caption: "Bàn điều khiển 4 Đòn bẩy độc lập (Day 3 p.17)" },
+        image: { file: "assets/p017_mixer_levers.jpg", caption: "Bàn điều khiển 4 Đòn bẩy độc lập" },
         levers: [
           {
             ch: "CH 01", name: "Difficulty", vn: "Độ khó", icon: "🔥", fader: 80, color: "#FF5470", tone: "tone-diff", lip: "var(--diff-lip)",
@@ -2504,7 +2500,7 @@
           }
         ],
         notes: `
-          <p class="notes-lead">🎛️ <strong>Khung 4 Đòn bẩy độc lập (Trang 16–17 tài liệu Day 3):</strong> Thay vì chỉ có 1 núm vặn "Độ khó", Level Designer sở hữu một bàn mixer 4 kênh độc lập.</p>
+          <p class="notes-lead">🎛️ <strong>Khung 4 Đòn bẩy độc lập:</strong> Thay vì chỉ có 1 núm vặn "Độ khó", Level Designer sở hữu một bàn mixer 4 kênh độc lập.</p>
           <ul>
             <li><strong>Bản chất của 4 Đòn bẩy thiết kế độc lập:</strong>
               <br>• <strong>1. Difficulty (Độ khó):</strong> Kiểm soát xác suất thất bại & cảm xúc (bớt moves, giảm thời gian, ép nước then chốt).
@@ -2525,7 +2521,7 @@
         title: "Bẫy Stress Stacking: Khi cả 4 tảng đá cùng đè lên người chơi",
         layout: "stress_stacking_trap",
         short: false,
-        image: { file: "assets/p019_stress_stacking_bear.jpg", caption: "Bẫy Stress Stacking: Chồng cả 4 tảng đá lên người chơi cùng lúc (Day 3 p.19)" },
+        image: { file: "assets/p019_stress_stacking_bear.jpg", caption: "Bẫy Stress Stacking: Chồng cả 4 tảng đá lên người chơi cùng lúc" },
         explain: "Kéo cả 4 đòn bẩy lên đỉnh cùng lúc: áp lực nhân lên, không chỉ cộng thêm.",
         rocks: [
           { icon: "🔥", name: "Difficulty ↑", tone: "tile-diff", desc: "Bớt nước đi, ép thời gian" },
@@ -2535,10 +2531,10 @@
         ],
         hint: { en: "Rotate levers, save stacking for the elder game", vn: "Luân phiên các đòn bẩy. Chỉ xếp chồng ở cuối game, khi người chơi đã thuần thục." },
         notes: `
-          <p class="notes-lead">🚨 <strong>Cạm bẫy Stress Stacking (Trang 19 & 74 tài liệu Day 3):</strong> Chồng cả 4 tảng đá lên người chơi cùng lúc.</p>
+          <p class="notes-lead">🚨 <strong>Cạm bẫy Stress Stacking:</strong> Chồng cả 4 tảng đá lên người chơi cùng lúc.</p>
           <ul>
             <li><strong>Cơ chế của bẫy:</strong> Khi gộp mọi thứ vào chữ "Khó", Designer vô thức đẩy cả 4 đòn bẩy lên đỉnh cùng một lúc: vừa bớt lượt, vừa thêm luật mới, vừa đổi cơ chế lạ, vừa cắt xẻ bàn cờ.</li>
-            <li><strong>Hậu quả:</strong> Tải nhận thức (Cognitive load) không chỉ cộng thêm mà <em>nhân lên theo cấp số nhân</em>. Người chơi rơi vào trạng thái quá tải kéo dài (Sustained Overload): <strong>Fail $\rightarrow$ Fail $\rightarrow$ Fail $\rightarrow$ CHURN!</strong></li>
+            <li><strong>Hậu quả:</strong> Tải nhận thức (Cognitive load) không chỉ cộng thêm mà <em>nhân lên theo cấp số nhân</em>. Người chơi rơi vào trạng thái quá tải kéo dài (Sustained Overload): <strong>Fail → Fail → Fail → CHURN!</strong></li>
             <li><strong>Quy tắc vàng tối thượng:</strong> <mark>Rotate levers, save stacking for the elder game</mark> — Luân phiên xoay vòng các đòn bẩy, tuyệt đối không kéo cả 4 đòn bẩy lên đỉnh cùng một lúc! Việc xếp chồng chỉ dành riêng cho giai đoạn cuối game khi người chơi đã là cao thủ.</li>
           </ul>
         `,
@@ -2559,9 +2555,9 @@
           { icon: "📐", title: "Bố cục lớn hoặc hẹp hiểm (Layouts)", desc: "Tăng số lượng mảnh cần dọn hoặc chia cắt bàn cờ khó tiếp cận." },
           { icon: "🔑", title: "Đòi hỏi nước đi then chốt (Key moves)", desc: "Phải giải đúng trình tự nút thắt; mở sai khóa đầu là kẹt cả bàn." }
         ],
-        image: { file: "assets/p020_arrows_difficulty.jpg", caption: "Cùng 1 luật mũi tên tối giản nhưng nâng từ Normal ➔ Hard ➔ Super Hard (Day 3 p.20)" },
+        image: { file: "assets/p020_arrows_difficulty.jpg", caption: "Cùng 1 luật mũi tên tối giản nhưng nâng từ Normal ➔ Hard ➔ Super Hard" },
         notes: `
-          <p class="notes-lead">🔥 <strong>Giải mã bản chất Đòn bẩy #1 – Difficulty (Trang 16–18 & 20 tài liệu Day 3):</strong> Trước khi bàn về chuyện nên hay không nên làm gì, Designer cần hiểu rõ bản chất cơ học của Difficulty:</p>
+          <p class="notes-lead">🔥 <strong>Giải mã bản chất Đòn bẩy #1 – Difficulty:</strong> Trước khi bàn về chuyện nên hay không nên làm gì, Designer cần hiểu rõ bản chất cơ học của Difficulty:</p>
           <ul>
             <li><strong>Mục tiêu tâm lý:</strong> Kiểm soát <mark>xác suất thất bại (Failure probability)</mark> và biên độ cảm xúc của người chơi.</li>
             <li><strong>4 cách biểu hiện trực tiếp trên bàn cờ:</strong> (1) Ít nước đi hơn (<em>Fewer moves</em>), (2) Ít thời gian hơn (<em>Less time</em>), (3) Bố cục lớn hơn hoặc hẹp hiểm hơn (<em>Larger/complex layouts</em>), và (4) Đòi hỏi các nước đi then chốt chính xác (<em>Requiring key moves</em>).</li>
@@ -2591,9 +2587,9 @@
           { title: "Xếp nhiều màn Khó liên tiếp không cho thở", desc: "Bào mòn sạch tài nguyên và chuỗi thắng khiến người chơi bỏ cuộc hàng loạt (Churn)." }
         ],
         bottomTakeaway: "🎯 Chuẩn thiết kế: Thua mà hiểu rõ vì sao mình thua sẽ kích thích bấm \"Chơi lại\" — Thua vì mù mờ luật sẽ dẫn thẳng tới xóa game!",
-        image: { file: "assets/p015_homescapes_100.jpg", caption: "100 màn đầu Homescapes: Cô lập các đỉnh Spike và luôn lót màn dễ xả hơi (Day 3 p.15)" },
+        image: { file: "assets/p015_homescapes_100.jpg", caption: "100 màn đầu Homescapes: Cô lập các đỉnh Spike và luôn lót màn dễ xả hơi" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Difficulty (Trang 27–28 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Difficulty:</strong></p>
           <ul>
             <li><strong>Nguyên tắc NÊN LÀM (Best Practices):</strong>
               <br>• <mark>Cô lập đỉnh nhọn (Isolate spikes):</mark> Tách riêng Difficulty spike ra khỏi các đòn bẩy khác.
@@ -2613,7 +2609,7 @@
         layout: "hint_diff_cadence",
         short: false,
         notes: `
-          <p class="notes-lead">🎵 <strong>Chiến thuật phân bổ Nhịp độ tiêu chuẩn (Typical Cadence — Trang 29–30 Day 3):</strong> Đường biểu diễn <mark>E → E → E → <strong>H</strong> → E → E → E → <strong>SH</strong></mark> là công thức nhịp thở kinh điển của các tựa game Puzzle hàng đầu:</p>
+          <p class="notes-lead">🎵 <strong>Chiến thuật phân bổ Nhịp độ tiêu chuẩn:</strong> Đường biểu diễn <mark>E → E → E → <strong>H</strong> → E → E → E → <strong>SH</strong></mark> là công thức nhịp thở kinh điển của các tựa game Puzzle hàng đầu:</p>
           <ul>
             <li><strong>Quy tắc tối thiểu 3 màn Dễ (Easy) trước 1 màn Khó (Hard / Super Hard):</strong>
               <br>• 3 màn Dễ liên tiếp tạo thành vùng lấy đà, giúp người chơi tích lũy sự tự tin, nạp đầy chuỗi thắng (<mark>Win Streak</mark>) và bước vào trạng thái nhập tâm (Flow).
@@ -2638,9 +2634,9 @@
           { icon: "🎯", title: "Đa mục tiêu song song (Multi-goals)", desc: "Buộc người chơi phải phân bổ sự chú ý và tính thứ tự ưu tiên giữa nhiều vùng." },
           { icon: "🔄", title: "Quy tắc biến đổi trạng thái theo lượt", desc: "Băng chuyền, cổng dịch chuyển, chướng ngại tự đổi màu/độ cứng sau mỗi nước đi." }
         ],
-        image: { file: "assets/p021_soda_complexity.jpg", caption: "Nhiều hệ thống tương tác đan xen nhưng cho dư dả 36 lượt đi (Day 3 p.21)" },
+        image: { file: "assets/p021_soda_complexity.jpg", caption: "Nhiều hệ thống tương tác đan xen nhưng cho dư dả 36 lượt đi" },
         notes: `
-          <p class="notes-lead">🧩 <strong>Giải mã bản chất Đòn bẩy #2 – Complexity (Trang 16–18 & 21 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🧩 <strong>Giải mã bản chất Đòn bẩy #2 – Complexity:</strong></p>
           <ul>
             <li><strong>Mục tiêu tâm lý:</strong> Thúc đẩy sự hình thành <mark>Heuristics mới</mark> và mở rộng chiều sâu chiến thuật dài hạn.</li>
             <li><strong>Sự khác biệt với Difficulty:</strong> Complexity đo bằng số lượng quy tắc và mối tương tác nhân quả mà não phải xử lý cùng lúc (<em>Cognitive load</em>), hoàn toàn không đồng nghĩa với xác suất thua cao!</li>
@@ -2670,11 +2666,11 @@
           { title: "Đánh đồng sự mù mờ (Obscurity) với chiều sâu", desc: "Giấu luật hoặc bắt nhớ lại cơ chế đã bỏ bẵng từ 200 màn trước mà không có màn nhắc bài." }
         ],
         bottomTakeaway: "🧩 Quy tắc thiết kế: Mỗi cơ chế mới phải làm bàn cờ giàu tính tương tác hơn — Đừng biến bàn cờ thành nhà tù trói tay người chơi!",
-        image: { file: "assets/p026_img0_800x999.jpg", caption: "Tiến trình 100 màn Homescapes: Rải cơ chế mới cách quãng rất đều đặn (Day 3 p.26)" },
+        image: { file: "assets/p026_img0_800x999.jpg", caption: "Tiến trình 100 màn Homescapes: Rải cơ chế mới cách quãng rất đều đặn" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Complexity (Trang 26, 31–34 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Complexity:</strong></p>
           <ul>
-            <li><strong>Nguyên tắc NÊN LÀM:</strong> Kiên nhẫn đợi người chơi thuần thục; luôn chèn màn củng cố (Consolidation levels); và thiết kế chướng ngại vật theo hướng mở rộng lựa chọn chiến thuật (Trang 34).</li>
+            <li><strong>Nguyên tắc NÊN LÀM:</strong> Kiên nhẫn đợi người chơi thuần thục; luôn chèn màn củng cố (Consolidation levels); và thiết kế chướng ngại vật theo hướng mở rộng lựa chọn chiến thuật.</li>
             <li><strong>Cạm bẫy TRÁNH LÀM:</strong> Không giới thiệu nhiều cơ chế tương tác cùng lúc; không tăng Complexity ngay tại điểm Difficulty spike; không nhầm lẫn sự mù mờ (Obscurity) với chiều sâu chiến thuật (Depth).</li>
           </ul>
         `,
@@ -2728,14 +2724,14 @@
           { icon: "🎉", title: "Khuyến khích chiến thắng (Encourage success)", desc: "Luật cực thoáng, nổ dây chuyền mãn nhãn để ai bước vào cũng cầm chắc phần thưởng." },
           { icon: "⚡", title: "Cơ chế khách mời ngắn hạn (One-off twists)", desc: "Xuất hiện tạo bất ngờ trong 1–2 màn rồi rút lui, không làm nặng bộ luật gốc." }
         ],
-        image: { file: "assets/p022_soda_novelty.jpg", caption: "Cơ chế mới lạ mắt trong Candy Crush Soda (Day 3 p.22)" },
-        secondImage: { file: "assets/p022_img7_686x386.jpg", caption: "Màn Bonus gom xu ngập tràn phần thưởng trong Royal Match (Day 3 p.22)" },
+        image: { file: "assets/p022_soda_novelty.jpg", caption: "Cơ chế mới lạ mắt trong Candy Crush Soda" },
+        secondImage: { file: "assets/p022_img7_686x386.jpg", caption: "Màn Bonus gom xu ngập tràn phần thưởng trong Royal Match" },
         notes: `
-          <p class="notes-lead">⭐ <strong>Giải mã bản chất Đòn bẩy #3 – Novelty (Trang 16–18 & 22 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">⭐ <strong>Giải mã bản chất Đòn bẩy #3 – Novelty:</strong></p>
           <ul>
             <li><strong>Định nghĩa:</strong> Đưa vào một yếu tố khác biệt hoàn toàn với trải nghiệm thường ngày mà <mark>không cần khó hay phức tạp</mark>.</li>
             <li><strong>Mục tiêu tâm lý:</strong> Phá vỡ sự đơn điệu, tái kích hoạt sự tò mò và trao thưởng cảm xúc ở những khoảng nghỉ giữa các cụm màn căng thẳng.</li>
-            <li><strong>Minh họa kép từ Trang 22:</strong> Kết hợp cả màn chơi cơ chế lạ của <em>Candy Crush Soda</em> lẫn màn Bonus gom tiền xu của <em>Royal Match</em> — nơi yếu tố mới mẻ luôn đi kèm chiến thắng tưng bừng.</li>
+            <li><strong>Minh họa kép:</strong> Kết hợp cả màn chơi cơ chế lạ của <em>Candy Crush Soda</em> lẫn màn Bonus gom tiền xu của <em>Royal Match</em> — nơi yếu tố mới mẻ luôn đi kèm chiến thắng tưng bừng.</li>
           </ul>
         `,
         bridge: "Để món tráng miệng Novelty phát huy tối đa sức hút mà không phản tác dụng, hãy xem bộ quy tắc Nên làm và Tránh xa ở trang tiếp theo."
@@ -2761,9 +2757,9 @@
           { title: "Lấy mánh khóe ngắn hạn thay cho chiều sâu", desc: "Novelty chỉ giúp kéo lại sự chú ý tức thì, không thể thay thế hệ thống Mastery để giữ chân dài hạn." }
         ],
         bottomTakeaway: "⭐ Quy tắc vàng: Novelty giống như pháo hoa — Bắn đúng lúc trời quang thì rực rỡ, bắn liên tục trong bão thì chỉ gây chói mắt!",
-        image: { file: "assets/p022_img7_686x386.jpg", caption: "Royal Match Bonus Level: Đóng khung thị giác rõ ràng, chơi xả láng thắng ngập xu (Day 3 p.22)" },
+        image: { file: "assets/p022_img7_686x386.jpg", caption: "Royal Match Bonus Level: Đóng khung thị giác rõ ràng, chơi xả láng thắng ngập xu" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Novelty (Trang 39–40 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Novelty:</strong></p>
           <ul>
             <li><strong>Nguyên tắc NÊN LÀM:</strong> Giới thiệu ở thời điểm áp lực thấp (Low-pressure moments); đóng khung thị giác (Visual framing); và giới hạn tối đa 1 ý niệm mới tại một thời điểm.</li>
             <li><strong>Cạm bẫy TRÁNH LÀM:</strong> Không bao giờ ghép Novelty với Spike độ khó; không tung liên tiếp làm mất tính bất ngờ; không dựa dẫm vào Novelty để giữ chân dài hạn.</li>
@@ -2781,7 +2777,7 @@
         short: false,
         image: { file: "assets/p041_novelty_vs_complexity.jpg", caption: "Đối chiếu thực tế: Luật chính tích lũy (Complexity) vs Sự kiện đổi gió (Novelty)" },
         notes: `
-          <p class="notes-lead">🔑 <strong>Phân biệt rạch ròi Novelty và Complexity (Trang 41–43 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔑 <strong>Phân biệt rạch ròi Novelty và Complexity:</strong></p>
           <ul>
             <li><strong>Đường bậc thang đi lên — COMPLEXITY:</strong> Thuộc về hệ thống quy tắc cốt lõi (Core rule system), ở lại mãi và tích lũy theo thời gian.</li>
             <li><strong>Đường xung nhịp ngắt quãng — NOVELTY:</strong> Dành cho Minigames, sự kiện mùa hoặc Bonus level — bùng lên trong 1–2 màn rồi rút lui về 0.</li>
@@ -2806,9 +2802,9 @@
           { icon: "🎨", title: "Biến thể thẩm mỹ & mô hình 3D (Aesthetics)", desc: "Đổi hình thái vật thể tương tác (từ tháo ốc khối hộp sang tháo ốc chiếc xe tay ga 3D)." }
         ],
         image: { file: "assets/p023_img4_600x300.jpg", caption: "Biến tấu layout mê cung mũi tên." },
-        secondImage: { file: "assets/p023_img10_338x600.jpg", caption: "Biến thể mô hình 3D chiếc xe tay ga trong game tháo ốc (Day 3 p.23)" },
+        secondImage: { file: "assets/p023_img10_338x600.jpg", caption: "Biến thể mô hình 3D chiếc xe tay ga trong game tháo ốc" },
         notes: `
-          <p class="notes-lead">🎨 <strong>Giải mã bản chất Đòn bẩy #4 – Variety (Trang 16–18 & 23 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🎨 <strong>Giải mã bản chất Đòn bẩy #4 – Variety:</strong></p>
           <ul>
             <li><strong>Định nghĩa:</strong> Những biến thể nhỏ giữa các màn chơi bình thường giúp hành trình hàng nghìn level luôn tươi mới.</li>
             <li><strong>Đặc tính độc nhất:</strong> Variety là <mark>Constant Lever (Đòn bẩy hoạt động liên tục)</mark> trên từng level, giúp tiết kiệm chi phí sản xuất khổng lồ bằng cách tái tổ hợp các hệ thống đã có.</li>
@@ -2837,9 +2833,9 @@
           { title: "Đổi bố cục tùy tiện làm vọt độ khó ngoài ý muốn", desc: "Cắt xẻ bàn cờ quá tay để tạo hình lạ mắt nhưng vô tình làm tắc nghẽn hoàn toàn đường rơi mảnh ghép." }
         ],
         bottomTakeaway: "🎨 Bí quyết nhà nghề: 5 cơ chế cũ nếu biết cách bắt cặp chéo và đổi dáng bàn cờ có thể sinh ra hơn 100 màn chơi không màn nào giống màn nào!",
-        image: { file: "assets/p035_variety_recombine.jpg", caption: "Cùng bộ nguyên liệu nhưng đổi cấu trúc bàn cờ là ra bài toán hoàn toàn mới (Day 3 p.35)" },
+        image: { file: "assets/p035_variety_recombine.jpg", caption: "Cùng bộ nguyên liệu nhưng đổi cấu trúc bàn cờ là ra bài toán hoàn toàn mới" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Variety (Trang 35–36 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Nguyên tắc vận hành Variety:</strong></p>
           <ul>
             <li><strong>Nguyên tắc NÊN LÀM:</strong> Tái tổ hợp hệ thống sẵn có trước khi thêm cơ chế mới; thay đổi cấu trúc thực chất (spawner, mục tiêu, layout); tính trước biến thể thẩm mỹ.</li>
             <li><strong>Cạm bẫy TRÁNH LÀM:</strong> Không lạm dụng reskin vô nghĩa khi không có tác động chiến thuật; không mặc định cứ đổi hình ảnh là đủ tạo Variety.</li>
@@ -2856,10 +2852,10 @@
         layout: "hint_var_toolkit",
         short: false,
         notes: `
-          <p class="notes-lead">🧭 <strong>Công thức 80/20 & Giải pháp cho game thuần giải đố (Trang 37–38 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🧭 <strong>Công thức 80/20 & Giải pháp cho game thuần giải đố:</strong></p>
           <ul>
             <li><strong>1. Thanh tỷ lệ vàng <mark>80% Quen thuộc + 20% Biến tấu</mark>:</strong> Giữ 80% nền tảng quen thuộc để bảo toàn cảm giác tự tin (Mastery) và thêm 20% gia vị biến tấu để kích thích sự chú ý.</li>
-            <li><strong>2. 3 nút vặn cấu trúc khi game KHÔNG có yếu tố thẩm mỹ / cốt truyện (Trang 37):</strong>
+            <li><strong>2. 3 nút vặn cấu trúc khi game KHÔNG có yếu tố thẩm mỹ / cốt truyện:</strong>
               <br>• <mark>1. Đổi định dạng & Độ dài màn (Level format / length):</mark> Đan xen màn giải nhanh 30–45s với màn nhiều chặng, hoặc xoay vòng giữa Moves và Timed.
               <br>• <mark>2. Đổi bộ Booster cho phép (Available boosters):</mark> Giới hạn hoặc cấp sẵn công cụ đặc thù trên bàn cờ để buộc người chơi đổi chiến thuật.
               <br>• <mark>3. Đổi đối tượng tương tác (Interactive objects):</mark> Thay đổi kích cỡ vật thể, màu sắc, loại phương tiện (xe con, xe buýt, xe cứu hỏa) hoặc kiểu hành khách trên cùng bộ luật gốc.</li>
@@ -2871,7 +2867,7 @@
       // S20 (TÁCH MỚI TỪ TRANG 14 CŨ) — 5 Tổ hợp tương tác có khả năng xảy ra (Day 3 Trang 24)
       {
         id: 21,
-        kicker: "Chặng 2 • Tương tác chéo (Day 3 p.24)",
+        kicker: "Chặng 2 • Tương tác chéo",
         title: "Phản ứng dây chuyền: 5 tổ hợp tương tác có khả năng xảy ra",
         layout: "levers_interactions",
         short: true,
@@ -2918,7 +2914,7 @@
           }
         ],
         notes: `
-          <p class="notes-lead">🔗 <strong>Giải phẫu 5 Tổ hợp tương tác có khả năng xảy ra (Possible Interactions — Trang 24 tài liệu Day 3):</strong> Dù 4 đòn bẩy độc lập về mặt khái niệm, nhưng trong thực tế chế tác bàn cờ, một thao tác của Designer thường kích hoạt <mark>phản ứng dây chuyền qua 5 tổ hợp kinh điển</mark>:</p>
+          <p class="notes-lead">🔗 <strong>Giải phẫu 5 tổ hợp tương tác có khả năng xảy ra:</strong> Dù 4 đòn bẩy độc lập về mặt khái niệm, nhưng trong thực tế chế tác bàn cờ, một thao tác của Designer thường kích hoạt <mark>phản ứng dây chuyền qua 5 tổ hợp kinh điển</mark>:</p>
           <ul>
             <li><strong>1. Thêm cơ chế mới:</strong> Tăng <mark>Novelty</mark> + Kéo theo <mark>Complexity</mark>.</li>
             <li><strong>2. Thay đổi bố cục (Layout changes):</strong> Tăng <mark>Variety</mark> + Đẩy luôn <mark>Difficulty</mark> do hẹp đường di chuyển.</li>
@@ -2938,9 +2934,9 @@
         layout: "levers_matrix",
         short: true,
         notes: `
-          <p class="notes-lead">📌 <strong>Bảng tra cứu tổng kết 4 Đòn bẩy & Cạm bẫy Stress Stacking (Trang 19 & 24 Day 3):</strong></p>
+          <p class="notes-lead">📌 <strong>Bảng tra cứu tổng kết 4 Đòn bẩy & Cạm bẫy Stress Stacking:</strong></p>
           <ul>
-            <li><strong>Cạm bẫy Stress Stacking (Xếp chồng áp lực):</strong> Khi Designer không hiểu tính độc lập của 4 đòn bẩy, cố giải quyết mọi thứ bằng cách tăng "Khó", vô tình đẩy cả 4 đòn bẩy lên đỉnh cùng lúc — như hình ảnh chú gấu bị 4 tảng đá lớn đè nghẹt thở (Trang 19 Day 3).</li>
+            <li><strong>Cạm bẫy Stress Stacking (Xếp chồng áp lực):</strong> Khi Designer không hiểu tính độc lập của 4 đòn bẩy, cố giải quyết mọi thứ bằng cách tăng "Khó", vô tình đẩy cả 4 đòn bẩy lên đỉnh cùng lúc — như hình ảnh chú gấu bị 4 tảng đá lớn đè nghẹt thở.</li>
             <li><strong>Quy tắc vàng tối thượng:</strong> <mark>Rotate levers, save stacking for the elder game</mark> — Luân phiên xoay vòng các đòn bẩy, tuyệt đối không kéo cả 4 đòn bẩy lên đỉnh cùng một lúc!</li>
             <li><strong>Khi nào mới được phép xếp chồng (Stacking)?</strong> Chỉ dành riêng cho giai đoạn cuối game (<mark>Elder game / End of Content</mark>), khi người chơi đã là chuyên gia và làm chủ mọi hệ thống cơ bản.</li>
           </ul>
@@ -2989,11 +2985,11 @@
         ],
         bottomNote: "⚠️ Nhớ kỹ: Siết thời gian hay cắt bớt lượt đi chỉ làm tăng DIFFICULTY, không làm game sâu sắc (Complexity) hơn.",
         notes: `
-          <p class="notes-lead">🔗 <strong>Trục biến thể #1 – Áp lực (Pressure Modifiers — Trang 45–54 tài liệu Day 3):</strong> Mọi thể loại game giải đố đều được định hình qua 3 trục (Pressure, Solutions, Time Investment). Trục đầu tiên quyết định cách bạn tạo ra <mark>Difficulty</mark> và cách bạn thu tiền:</p>
+          <p class="notes-lead">🔗 <strong>Trục biến thể #1 – Áp lực:</strong> Mọi thể loại game giải đố đều được định hình qua 3 trục (Pressure, Solutions, Time Investment). Trục đầu tiên quyết định cách bạn tạo ra <mark>Difficulty</mark> và cách bạn thu tiền:</p>
           <ul>
-            <li><strong>A. Timed Games (Trang 46–48):</strong> Khuếch đại độ khó cảm xúc, chống overthinking. Nhược điểm: Bị gián đoạn ngoài đời thực hoặc giật lag là thua oan; người chơi cuống tay không kịp mua Booster.</li>
-            <li><strong>B. Moves Systems (Trang 49–51):</strong> Đề cao tính toán chiến lược, dễ chạy Bot-play, bán gói "+5 nước đi" cực hiệu quả.</li>
-            <li><strong>C. Constraint-Free Systems (Trang 52–54):</strong> Thắng khi giải xong bàn, thua khi bế tắc hết nước đi (Deadlock). Rất hút tệp Cozy và lớn tuổi nhưng cần trực quan hóa nguy cơ Deadlock để bán công cụ gỡ kẹt.</li>
+            <li><strong>A. Timed Games:</strong> Khuếch đại độ khó cảm xúc, chống overthinking. Nhược điểm: Bị gián đoạn ngoài đời thực hoặc giật lag là thua oan; người chơi cuống tay không kịp mua Booster.</li>
+            <li><strong>B. Moves Systems:</strong> Đề cao tính toán chiến lược, dễ chạy Bot-play, bán gói "+5 nước đi" cực hiệu quả.</li>
+            <li><strong>C. Constraint-Free Systems:</strong> Thắng khi giải xong bàn, thua khi bế tắc hết nước đi (Deadlock). Rất hút tệp Cozy và lớn tuổi nhưng cần trực quan hóa nguy cơ Deadlock để bán công cụ gỡ kẹt.</li>
           </ul>
         `,
         bridge: "Sau trục Áp lực, hãy xem 2 trục biến thể còn lại: Cấu trúc lời giải (Có RNG hay Không RNG) và Thời lượng mỗi ván chơi."
@@ -3007,14 +3003,14 @@
         layout: "split_solutions_time",
         short: false,
         notes: `
-          <p class="notes-lead">🔗 <strong>Trục biến thể #2 (Solutions — Trang 55–60) & #3 (Time Investment — Trang 61–64):</strong></p>
+          <p class="notes-lead">🔗 <strong>Trục biến thể #2 – Cấu trúc lời giải & #3 – Thời lượng:</strong></p>
           <ul>
             <li><strong>Trục 2 – Puzzle Structure (0% RNG) vs Challenge Structure (Có RNG):</strong>
-              <br>• <mark>Puzzle Structure (Trang 55–57):</mark> Có chuỗi nước đi tối ưu định trước, thắng cực kỳ xứng đáng, đo độ khó chuẩn bằng APS. Nhược điểm: Tốn công sản xuất, kẹt là nghỉ, lộ giải mẫu trên YouTube là hỏng. Bán <em>Hints & Undo</em>.
-              <br>• <mark>Challenge Structure (Trang 58–60):</mark> Có yếu tố ngẫu nhiên, tự sinh Variety, dễ gài DDA cứu thua và bán gói <em>"+5 Nước đi"</em> cực chạy.</li>
+              <br>• <mark>Puzzle Structure:</mark> Có chuỗi nước đi tối ưu định trước, thắng cực kỳ xứng đáng, đo độ khó chuẩn bằng APS. Nhược điểm: Tốn công sản xuất, kẹt là nghỉ, lộ giải mẫu trên YouTube là hỏng. Bán <em>Hints & Undo</em>.
+              <br>• <mark>Challenge Structure:</mark> Có yếu tố ngẫu nhiên, tự sinh Variety, dễ gài DDA cứu thua và bán gói <em>"+5 Nước đi"</em> cực chạy.</li>
             <li><strong>Trục 3 – Short Levels (&lt; 90s – 3 phút) vs Long Levels (&gt; 3 – 5+ phút):</strong>
-              <br>• <mark>Short Levels (Trang 61–62):</mark> Đánh nhanh thắng gọn, ma sát thử lại cực thấp, tạo nhiều điểm chào mua hàng.
-              <br>• <mark>Long Levels (Trang 63–64):</mark> Tưởng thưởng tư duy sâu nhưng thua ở phút thứ 4 gây ức chế bỏ cuộc cực mạnh (Strong quit moments) $\rightarrow$ <strong>Bắt buộc chia thành 3 Phase rõ rệt!</strong></li>
+              <br>• <mark>Short Levels:</mark> Đánh nhanh thắng gọn, ma sát thử lại cực thấp, tạo nhiều điểm chào mua hàng.
+              <br>• <mark>Long Levels:</mark> Tưởng thưởng tư duy sâu nhưng thua ở phút thứ 4 gây ức chế bỏ cuộc cực mạnh (Strong quit moments) → <strong>Bắt buộc chia thành 3 Phase rõ rệt!</strong></li>
           </ul>
         `,
         bridge: "Đã nắm trọn 4 đòn bẩy và 3 trục biến thể của thể loại game, giờ ta bước sang Trạm 4: Sắp xếp chuỗi màn chơi theo nhịp điệu lên xuống ra sao?"
@@ -3033,7 +3029,13 @@
           { tag: "3. REWARD & PLATEAU (Xả hơi)", color: "tile-var", desc: "Trao thưởng xứng đáng rồi hạ độ khó xuống ngay để người chơi tận hưởng." }
         ],
         notes: `
-          <p class="notes-lead">🔗 <strong>Trạm 4 – Nhịp điệu thiết kế (Cadence — Trang 65–70 tài liệu Day 3):</strong> Một tiến trình khỏe mạnh vận hành theo chu kỳ 5 nhịp: <mark>Ramp $\rightarrow$ Spike $\rightarrow$ Reward $\rightarrow$ Consolidate (Plateau) $\rightarrow$ Expand</mark>.</p>
+          <p class="notes-lead">🌊 <strong>Đến đây ta không còn hỏi “màn này khó bao nhiêu” nữa, mà hỏi “người chơi đang ở nhịp nào”.</strong> Một tiến trình khỏe mạnh đi theo chu kỳ <mark>Ramp → Spike → Reward → Consolidate → Expand</mark>.</p>
+          <ul>
+            <li><strong>Ramp:</strong> tăng dần để người chơi kịp luyện tay; năng lực tăng thì tự tin mới tăng.</li>
+            <li><strong>Spike:</strong> là bài kiểm tra, nơi cảm xúc và nhu cầu dùng booster lên cao nhất. Nhưng đỉnh chỉ công bằng khi mọi luật đã được dạy từ trước.</li>
+            <li><strong>Reward và Plateau:</strong> vượt đỉnh xong phải được thưởng và có chỗ thở. Đây là lúc củng cố bài vừa học, hoặc đưa một novelty nhẹ vào để đổi gió.</li>
+            <li><strong>Expand:</strong> chỉ mở rộng độ khó hay luật chơi sau khi người chơi đã ổn định ở mặt phẳng trước đó.</li>
+          </ul>
         `,
         bridge: "Ai cũng biết Spike là nơi kiếm tiền tốt nhất, nhưng ranh giới giữa một màn Spike 'công bằng' khiến người chơi phục thù và một màn 'ép bức' khiến họ xóa game nằm ở đâu?"
       },
@@ -3053,7 +3055,12 @@
         ],
         image: { file: "assets/p071_toon_blast.jpg", caption: "Toon Blast: Nhảy vọt từ 3 lớp lên 9 lớp ghép — rất gắt nhưng luật cực rõ!", preset: "spike9Layers" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Giải phẫu nguyên nhân gây Churn tại các điểm Spike (Trang 71–73 tài liệu Day 3):</strong> Churn thực sự xảy ra do <mark>Sustained Overload (Quá tải kéo dài / Stress Stacking)</mark>: <strong>Fail $\rightarrow$ Fail $\rightarrow$ Fail $\rightarrow$ CHURN!</strong></p>
+          <p class="notes-lead">💥 <strong>Một màn khó chưa chắc làm người chơi bỏ game.</strong> Điều làm họ rời đi là cảm giác bị dồn vào ngõ cụt: <mark>Fail → Fail → Fail → Churn</mark>.</p>
+          <ul>
+            <li><strong>Spike công bằng:</strong> người chơi nhìn được nhân quả, nhận ra “lẽ ra mình nên đi nước khác”, và vẫn có cửa thắng bằng kỹ năng.</li>
+            <li><strong>Spike độc hại:</strong> nhét luật mới, siết tài nguyên và bắt thua liên tiếp. Khi đó họ không học được gì ngoài cảm giác game đang xử ép.</li>
+            <li><strong>Việc cần làm:</strong> sau một đỉnh, trả lại nhịp thở bằng reward hoặc consolidation; đừng biến cả một đoạn tiến trình thành chuỗi thử lửa.</li>
+          </ul>
         `,
         bridge: "Để thiết kế được những pha rượt đuổi cảm xúc như vậy, chúng ta cần nắm vững 4 hiệu ứng tâm lý học hành vi đứng đằng sau ở trang tiếp theo."
       },
@@ -3105,7 +3112,7 @@
           }
         ],
         notes: `
-          <p class="notes-lead">🔗 <strong>4 Động cơ tâm lý phía sau Nhịp điệu (Trang 74–75 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>4 Động cơ tâm lý phía sau Nhịp điệu:</strong></p>
           <ul>
             <li><strong>1. Goal Gradient:</strong> Càng gần đích nỗ lực càng tăng vọt.</li>
             <li><strong>2. Near Miss:</strong> Suýt thắng kích thích bấm chơi lại hoặc mua thêm lượt mạnh gấp bội thua đậm.</li>
@@ -3167,10 +3174,10 @@
         ],
         bottomNote: "🌿 Nhớ kỹ: Không phải màn nào cũng bắt người chơi vắt óc — phần lớn thời gian dân chơi casual chỉ muốn giải trí nhẹ nhàng!",
         notes: `
-          <p class="notes-lead">🔗 <strong>Giải mã cơ chế tâm lý "Feeling Smart" (Trang 76–80 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Giải mã cơ chế tâm lý "Feeling Smart":</strong></p>
           <ul>
             <li><strong>3 trụ cột tạo cảm giác thông minh:</strong> (1) <mark>Prediction</mark> (Dự đoán trước 2–3 bước), (2) <mark>Insight</mark> (Ngộ ra điểm đột phá / thắng sát nút ở nước cuối), (3) <mark>Control</mark> (Làm chủ kế hoạch, dư dả lượt đi).</li>
-            <li><strong>4 cạm bẫy "Thắng nhạt" (Trang 80):</strong> Booster quá mạnh làm thay người chơi; thắng rùa nhờ RNG ở lần thử thứ 20; chép lời giải YouTube; hoặc màn quá dễ không cần nghĩ.</li>
+            <li><strong>4 cạm bẫy "Thắng nhạt":</strong> Booster quá mạnh làm thay người chơi; thắng rùa nhờ RNG ở lần thử thứ 20; chép lời giải YouTube; hoặc màn quá dễ không cần nghĩ.</li>
           </ul>
         `,
         bridge: "Nhịp điệu ngắn hạn qua từng cụm 5–10 màn đã rõ. Vậy trên hành trình dài hạn suốt 5 giai đoạn vòng đời từ lúc mới tải game đến màn 500+ thì 4 đòn bẩy dịch chuyển thế nào?"
@@ -3191,7 +3198,7 @@
           { name: "5. End of Content (Cuối)", goal: "Thử thách cao thủ & vinh danh", diff: "Tùy tệp người chơi", comp: "Tùy tệp người chơi", nov: "Tùy tệp", var: "Tùy tệp" }
         ],
         notes: `
-          <p class="notes-lead">🔗 <strong>Trạm 5 – Khung Vòng đời Tiến trình (Progression Lifecycle Framework — Trang 81–84 Day 3):</strong> Trọng số của 4 Đòn bẩy phải dịch chuyển qua 5 giai đoạn từ Discovery đến End of Content.</p>
+          <p class="notes-lead">🔗 <strong>Trạm 5 – Khung Vòng đời Tiến trình:</strong> Trọng số của 4 Đòn bẩy phải dịch chuyển qua 5 giai đoạn từ Discovery đến End of Content.</p>
         `,
         bridge: "Nếu vẽ cả 4 đòn bẩy qua 5 giai đoạn này thành biểu đồ đường cong liên tục, chúng ta sẽ thấy ngay vùng nguy hiểm nào cần tránh và giải quyết bài toán 'Cày cuốc' (Grinding) ra sao."
       },
@@ -3204,7 +3211,7 @@
         layout: "curves_and_grind",
         short: false,
         notes: `
-          <p class="notes-lead">🔗 <strong>Đọc đồ thị 4 Đòn bẩy & Bài toán Grinding (Trang 85–88 tài liệu Day 3):</strong> Kiểm soát vùng trùng đỉnh (Stress Stacking) và phân biệt rõ Practice (Luyện tập có chủ đích) với Grind (Cày cuốc câu giờ).</p>
+          <p class="notes-lead">🔗 <strong>Đọc đồ thị 4 Đòn bẩy & Bài toán Grinding:</strong> Kiểm soát vùng trùng đỉnh (Stress Stacking) và phân biệt rõ Practice (Luyện tập có chủ đích) với Grind (Cày cuốc câu giờ).</p>
         `,
         bridge: "Thiết kế đường cong trên lý thuyết xong rồi, giờ bước sang Trạm 6: Khi tung game ra thực tế và mở bảng Data lên, ta nhìn vào đâu để bắt bệnh tiến trình?"
       },
@@ -3217,7 +3224,12 @@
         layout: "doctor_diagnostics",
         short: true,
         notes: `
-          <p class="notes-lead">🔗 <strong>Trạm 6 – Dữ liệu & Chẩn đoán lỗi Level Design (Trang 89–93 tài liệu Day 3):</strong> Nhận diện Stacked Spikes, thiếu Consolidation và cách chỉnh sửa trực tiếp trong Level Editor.</p>
+          <p class="notes-lead">🩺 <strong>Data không thay designer ra quyết định; nó chỉ chỉ đúng chỗ đang đau.</strong> Ở đồ thị này, ta cần bắt hai căn bệnh rất hay gặp.</p>
+          <ul>
+            <li><strong>Stacked Spikes:</strong> nhiều đỉnh khó chồng sát nhau làm Attempts per Success tăng và tỷ lệ qua màn rơi. Cách chữa là giãn nhịp: thêm lượt, bớt blocker hoặc dời đỉnh đi.</li>
+            <li><strong>Không có Consolidation:</strong> vừa vượt một đỉnh đã bị đẩy lên đỉnh kế tiếp, nên người chơi đứt hơi. Hãy chèn màn dễ để họ dùng lại kỹ năng vừa học và hồi tự tin.</li>
+            <li><strong>Đọc đúng tín hiệu:</strong> bỏ giữa ván thường là màn quá dài hoặc quá rối; còn nhiều lần thử mới qua là dấu hiệu cần kiểm tra độ khó và tài nguyên.</li>
+          </ul>
         `,
         bridge: "Nhưng khi đọc các chỉ số APS hay tỷ lệ bỏ cuộc này, nếu chỉ nhìn vào một con số trung bình gộp chung thì bạn sẽ sập bẫy ngay. Vì sao?"
       },
@@ -3264,10 +3276,10 @@
           }
         ],
         notes: `
-          <p class="notes-lead">🔗 <strong>Phân khúc người chơi (Player Cohorts) & Vòng lặp Data-informed (Trang 94–96 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🔗 <strong>Phân khúc người chơi (Player Cohorts) & Vòng lặp Data-informed:</strong></p>
           <ul>
             <li><strong>4 nhóm đối tượng (Cohorts) bắt buộc phải tách bạch khi đọc Data:</strong> (1) Ad Watchers vs Payers, (2) On Streak vs Tay trắng, (3) Kho đầy đồ vs Vừa cạn kiệt, (4) Nhóm có lịch sử thất bại cao.</li>
-            <li><strong>Vòng lặp tinh chỉnh 4 bước:</strong> <mark>1. Sửa nhỏ (Small changes) $\rightarrow$ 2. Chạy thử (Test) $\rightarrow$ 3. Tinh chỉnh (Refine) $\rightarrow$ 4. Ghi tài liệu (Document)</mark>.</li>
+            <li><strong>Vòng lặp tinh chỉnh 4 bước:</strong> <mark>1. Sửa nhỏ (Small changes) → 2. Chạy thử (Test) → 3. Tinh chỉnh (Refine) → 4. Ghi tài liệu (Document)</mark>.</li>
           </ul>
         `,
         bridge: "Đã biết cách đọc dữ liệu chẩn đoán theo từng tệp người chơi, giờ ta bước sang Trạm 7: Mở hộp đồ nghề thực thi gồm Cơ chế, Động lực, Tiền tệ và Booster."
@@ -3282,7 +3294,12 @@
         short: false,
         image: { file: "assets/p100_royal_kingdom_multi_goal.jpg", caption: "Chướng ngại nhiều lớp ép không gian xoay xở hẹp lại", preset: "lateObstacles" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Trạm 7 – Ngữ pháp của Cơ chế (The Grammar of Mechanics — Trang 97–102 tài liệu Day 3):</strong> 4 thành phần cấu tạo màn chơi gồm Layouts, Spawners & Specials, Blockers nhiều lớp và Goal Mechanics.</p>
+          <p class="notes-lead">♟️ <strong>Hãy xem cơ chế như ngữ pháp để viết nên một bàn cờ.</strong> Một level không chỉ là “thêm blocker cho khó”; bốn thành phần này luôn tác động lẫn nhau.</p>
+          <ul>
+            <li><strong>Layout</strong> quyết định không gian và đường đi; <strong>spawner/special</strong> quyết định nguồn lực cũng như cơ hội tạo combo.</li>
+            <li><strong>Blocker</strong> tạo nút thắt, nhưng thêm một lớp cản cũng đồng nghĩa thu hẹp không gian xoay xở của người chơi.</li>
+            <li><strong>Goal</strong> cho người chơi biết ưu tiên cái gì. Vì vậy, khi đổi một thành phần, ta phải kiểm tra lại cả bàn cờ chứ không chỉ kiểm tra món vừa thêm.</li>
+          </ul>
         `,
         bridge: "Một bàn cờ có cơ chế hay đến mấy nhưng nếu người chơi thua mà chẳng mất gì, chỉ việc bấm chơi lại vô hồn thì cảm xúc sẽ ra sao? Hãy xem hệ thống tạo áp lực ở trang tiếp."
       },
@@ -3296,7 +3313,12 @@
         short: false,
         image: { file: "assets/p104_win_streak_boosters.jpg", caption: "Phần thưởng giữ chuỗi thắng liên tiếp (Win Streak)", preset: "noveltyBonus" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Nghịch lý của thất bại miễn phí (Paradox of Free Failure — Trang 103–110 tài liệu Day 3):</strong> Sức mạnh và rủi ro RageQuit của Win Streak, FOMO và cơ chế Mạng (Lives).</p>
+          <p class="notes-lead">🔥 <strong>Nếu thua hoàn toàn không mất gì, thắng cũng khó có cảm giác đáng giá.</strong> Streak và Lives tạo ra chút “đặt cược cảm xúc”, nhưng phải dùng rất cẩn thận.</p>
+          <ul>
+            <li><strong>Win Streak:</strong> cho phần thưởng đầu ván để người chơi muốn giữ đà thắng. Đổi lại, đừng để một màn vô lý cắt đứt chuỗi cao; cần có bảo vệ chuỗi hoặc đường hồi phục.</li>
+            <li><strong>Lives:</strong> tạo nhịp nghỉ và giới hạn thử lại, nhưng khóa quá sớm sẽ bóp chết giai đoạn học thử nghiệm của người mới.</li>
+            <li><strong>Nguyên tắc:</strong> dùng mất mát để tạo căng thẳng lành mạnh, không dùng nó để dồn người chơi vào cảm giác bị phạt vô cớ.</li>
+          </ul>
         `,
         bridge: "Khi Streak và Lives đã tạo ra động lực khao khát chiến thắng, làm sao để thiết kế dòng chảy Tiền tệ (Vàng & Kim cương) phục vụ nhu cầu đó mà không bị lạm phát?"
       },
@@ -3310,7 +3332,12 @@
         short: false,
         image: { file: "assets/p113_golden_pin.jpg", caption: "Hệ thống tiền tệ & vật phẩm giá trị cao", preset: "complexEasy" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Mô hình kinh tế trong Level Design (Trang 111–122 tài liệu Day 3):</strong> Phân vai Soft Currency vs Hard Currency và giải pháp Trickle Rewards chống siêu lạm phát.</p>
+          <p class="notes-lead">🪙 <strong>Kinh tế tốt không nằm ở việc ném thật nhiều tiền vào game, mà ở việc tiền luôn có vai trò rõ ràng.</strong></p>
+          <ul>
+            <li><strong>Soft currency</strong> như vàng/xu đến từ gameplay và xử lý các nhu cầu thường xuyên; <strong>hard currency</strong> hiếm hơn, thường gắn với giá trị mua bằng tiền thật.</li>
+            <li><strong>Bẫy lạm phát:</strong> thưởng một con số khổng lồ nhưng không có điểm tiêu hợp lý sẽ làm phần thưởng mất ý nghĩa.</li>
+            <li><strong>Trickle rewards:</strong> hãy rải phần thưởng nhỏ vào nước đi còn dư, thắng ngay lần đầu hoặc combo đẹp. Nhịp thưởng đều và có lý do sẽ giữ được cảm giác giá trị.</li>
+          </ul>
         `,
         bridge: "Có tiền trong tay rồi, thứ người chơi mua nhiều nhất chính là Booster và Nước đi. Vậy định giá một quả Bom bằng bao nhiêu đồng Vàng là chuẩn xác nhất?"
       },
@@ -3324,7 +3351,12 @@
         short: false,
         image: { file: "assets/p130_move_valuation.jpg", caption: "Quy đổi giá trị tiền tệ sang từng nước đi (Move Value)", preset: "levelEditorMock" },
         notes: `
-          <p class="notes-lead">🔗 <strong>Vũ khí chiến thuật & Mô hình hóa giá trị nước đi (Move Value Modeling — Trang 123–131 tài liệu Day 3):</strong> Quy đổi mọi Booster ra số nước đi tiết kiệm được qua Bot-play.</p>
+          <p class="notes-lead">⚖️ <strong>Muốn bán booster công bằng, ta cần một đơn vị chung để so sánh: số nước đi tiết kiệm được.</strong></p>
+          <ul>
+            <li><strong>Lấy gói thêm nước đi làm mốc:</strong> nếu 5 nước đi có một giá rõ ràng, ta có thể ước lượng giá trị của tên lửa, bom hay bất kỳ booster nào.</li>
+            <li><strong>Dùng bot-play:</strong> chạy nhiều ván để đo booster đó thực sự giúp tiết kiệm trung bình bao nhiêu nước, rồi quy đổi thành giá.</li>
+            <li><strong>Kết quả:</strong> offer trước màn chỉ thuyết phục khi nhãn “khó” trung thực và người chơi hiểu món họ mua đổi lấy lợi thế gì.</li>
+          </ul>
         `,
         bridge: "Nhưng dù hệ thống kinh tế và Booster có chuẩn đến đâu, vẫn sẽ có lúc người chơi đen đủi thua liên hoàn và đứng trước bờ vực xóa game. Đó là lúc Trạm 8 xuất hiện: Lưới an toàn DDA."
       },
@@ -3394,7 +3426,7 @@
           { num: "06", tag: "Gọt giũa", q: "Có chi tiết hay chướng ngại thừa thãi nào bỏ đi mà màn vẫn hay?", sub: "Thiết kế giỏi là khi không còn gì có thể bớt đi được nữa." }
         ],
         notes: `
-          <p class="notes-lead">🏁 <strong>Checklist Tự Đánh Giá & Ứng Dụng Thực Tế (6 câu hỏi kiểm duyệt — Trang 148 tài liệu Day 3):</strong></p>
+          <p class="notes-lead">🏁 <strong>Checklist Tự Đánh Giá & Ứng Dụng Thực Tế:</strong></p>
           <ul>
             <li><strong>Câu 1 – Mastery:</strong> Cơ chế nào đang thúc đẩy cảm giác thuần thục rõ ràng nhất?</li>
             <li><strong>Câu 2 – 4 Levers:</strong> Đâu là đòn bẩy chủ đạo của level này? Có đang bị xếp chồng vô thức không?</li>
@@ -4369,7 +4401,7 @@
                   </div>
 
                   <!-- Khung ảnh lớn trực quan -->
-                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p061_short_levels.jpg', 'Đan xen màn ngắn đánh nhanh với màn nhiều chặng (Day 3 p.61)')">
+                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p061_short_levels.jpg', 'Đan xen màn ngắn đánh nhanh với màn nhiều chặng')">
                     <img src="${resolveAsset('assets/p061_short_levels.jpg')}" alt="Level Format & Length" style="width:100%; height:100%; object-fit:cover;" />
                   </div>
 
@@ -4389,7 +4421,7 @@
                   </div>
 
                   <!-- Khung ảnh lớn trực quan -->
-                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p104_win_streak_boosters.jpg', 'Thay đổi bộ Booster cho phép hoặc cấp sẵn trên bàn (Day 3 p.104)')">
+                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p104_win_streak_boosters.jpg', 'Thay đổi bộ Booster cho phép hoặc cấp sẵn trên bàn')">
                     <img src="${resolveAsset('assets/p104_win_streak_boosters.jpg')}" alt="Available Boosters" style="width:100%; height:100%; object-fit:cover;" />
                   </div>
 
@@ -4409,7 +4441,7 @@
                   </div>
 
                   <!-- Khung ảnh lớn trực quan -->
-                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p055_puzzle_structure.jpg', 'Đổi kích cỡ xe, màu sắc và kiểu hành khách (Day 3 p.55)')">
+                  <div class="media-thumb" style="width:100%; height:clamp(300px, 14.5vh, 150px); border-radius:12px; margin:4px 0;" onclick="openCustomLightbox('assets/p055_puzzle_structure.jpg', 'Đổi kích cỡ xe, màu sắc và kiểu hành khách')">
                     <img src="${resolveAsset('assets/p055_puzzle_structure.jpg')}" alt="Interactive Objects" style="width:100%; height:100%; object-fit:cover;" />
                   </div>
 
@@ -4686,7 +4718,7 @@
                   <!-- Thẻ 1: Puzzle (0% RNG) -->
                   <div class="tile-sm tile-comp" style="display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:clamp(10px, 1.2vh, 14px); flex:1; min-height:0;">
                     <div style="display: flex;grid-template-columns: 88px 1fr;gap:12px;align-items:center;flex-direction: row-reverse;">
-                      <div class="media-thumb" style="width: 25%;height: 250px;border-radius:10px;background:#1A1426;" onclick="openCustomLightbox('assets/p055_puzzle_structure.jpg', 'Puzzle Structure: Lời giải cố định 0% RNG (Day 3 p.55)')">
+                      <div class="media-thumb" style="width: 25%;height: 250px;border-radius:10px;background:#1A1426;" onclick="openCustomLightbox('assets/p055_puzzle_structure.jpg', 'Puzzle Structure: Lời giải cố định 0% RNG')">
                         <img src="${resolveAsset('assets/p055_puzzle_structure.jpg')}" alt="Puzzle Structure" style="width:100%; height:100%; object-fit:contain;" />
                       </div>
                       <div>
@@ -4707,7 +4739,7 @@
                   <!-- Thẻ 2: Challenge (Có RNG) -->
                   <div class="tile-sm tile-nov" style="display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:clamp(10px, 1.2vh, 14px); flex:1; min-height:0;">
                     <div style="display: flex;grid-template-columns: 88px 1fr;gap:12px;align-items:center;flex-direction: row;">
-                      <div class="media-thumb" style="width: 25%;height: 250px;border-radius:10px;background:#1A1426;" onclick="openCustomLightbox('assets/p058_challenge_structure.jpg', 'Challenge Structure: Có yếu tố ngẫu nhiên RNG (Day 3 p.58)')">
+                      <div class="media-thumb" style="width: 25%;height: 250px;border-radius:10px;background:#1A1426;" onclick="openCustomLightbox('assets/p058_challenge_structure.jpg', 'Challenge Structure: Có yếu tố ngẫu nhiên RNG')">
                         <img src="${resolveAsset('assets/p058_challenge_structure.jpg')}" alt="Challenge Structure" style="width:100%; height:100%; object-fit:contain;" />
                       </div>
                       <div>
@@ -4739,7 +4771,7 @@
                   <!-- Thẻ 1: Màn ngắn (< 90s - 3p) -->
                   <div class="tile-sm tile-var" style="display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:clamp(10px, 1.2vh, 14px); flex:1; min-height:0;">
                     <div style="display: flex;grid-template-columns: 120px 1fr;gap:12px;align-items:center;flex-direction: column-reverse;">
-                      <div class="media-thumb" style="width:300px; height:clamp(150px, 10.5vh, 105px); border-radius:10px; background:#1A1426;" onclick="openCustomLightbox('assets/p061_short_levels.jpg', 'Short Levels: Đánh nhanh thắng gọn dưới 3 phút (Day 3 p.61)')">
+                      <div class="media-thumb" style="width:300px; height:clamp(150px, 10.5vh, 105px); border-radius:10px; background:#1A1426;" onclick="openCustomLightbox('assets/p061_short_levels.jpg', 'Short Levels: Đánh nhanh thắng gọn dưới 3 phút')">
                         <img src="${resolveAsset('assets/p061_short_levels.jpg')}" alt="Short Levels" style="width:100%; height:100%; object-fit:cover;" />
                       </div>
                       <div>
@@ -4759,7 +4791,7 @@
                   <!-- Thẻ 2: Màn dài (> 3 - 5p+) -->
                   <div class="tile-sm tile-diff" style="display:flex; flex-direction:column; justify-content:space-between; gap:8px; padding:clamp(10px, 1.2vh, 14px); flex:1.2; min-height:0;">
                     <div style="display: flex;grid-template-columns: 120px 1fr;gap:12px;align-items:center;flex-direction: column-reverse;">
-                      <div class="media-thumb" style="width:300px; height:clamp(150px, 10.5vh, 105px); border-radius:10px; background:#1A1426;" onclick="openCustomLightbox('assets/p063_long_levels.jpg', 'Long Levels: Màn dài trên 3–5 phút cần chia 3 Phase (Day 3 p.63)')">
+                      <div class="media-thumb" style="width:300px; height:clamp(150px, 10.5vh, 105px); border-radius:10px; background:#1A1426;" onclick="openCustomLightbox('assets/p063_long_levels.jpg', 'Long Levels: Màn dài trên 3–5 phút cần chia 3 Phase')">
                         <img src="${resolveAsset('assets/p063_long_levels.jpg')}" alt="Long Levels" style="width:100%; height:100%; object-fit:cover;" />
                       </div>
                       <div>
@@ -4952,7 +4984,7 @@
                     `;
             } else if (c.visualType === "near_miss") {
               visualStrip = `
-                      <div style="background:#FFFFFF; border:2px solid var(--ink); border-radius:12px; padding:6px 10px; display:flex; align-items:center; gap:10px; cursor:zoom-in;" onclick="openCustomLightbox('${c.img}', 'Near Miss: Chỉ còn thiếu đúng 1 mục tiêu khi hết lượt (Day 3 p.145)')">
+                      <div style="background:#FFFFFF; border:2px solid var(--ink); border-radius:12px; padding:6px 10px; display:flex; align-items:center; gap:10px; cursor:zoom-in;" onclick="openCustomLightbox('${c.img}', 'Near Miss: Chỉ còn thiếu đúng 1 mục tiêu khi hết lượt')">
                         <div class="media-thumb" style="width:62px; height:44px;">
                           <img src="${resolveAsset(c.img)}" alt="Near Miss" />
                         </div>
@@ -5492,7 +5524,7 @@
                 </div>
 
                 <div class="tile anim" style="background:#FFFFFF; padding:10px 14px; display:flex; flex-direction:row; align-items:center; gap:10px;">
-                  <div class="media-thumb" style="width:68px; height:64px;" onclick="openCustomLightbox('assets/p144_img5_2048x2048.jpg', 'Hidden Objects DDA: Tăng độ tương phản vật thể & giảm Cooldown gợi ý (Day 3 p.144)')">
+                  <div class="media-thumb" style="width:68px; height:64px;" onclick="openCustomLightbox('assets/p144_img5_2048x2048.jpg', 'Hidden Objects DDA: Tăng độ tương phản vật thể & giảm Cooldown gợi ý')">
                     <img src="${resolveAsset('assets/p144_img5_2048x2048.jpg')}" alt="Hidden Object DDA" />
                   </div>
                   <div style="flex:1;">
@@ -5515,7 +5547,7 @@
                 <div class="tile tile-bad anim" style="padding:14px 18px; justify-content:space-between;">
                   <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
                     <span class="tag" style="background:#E11D48; color:#FFFFFF;">⛔ GÀI BẪY THAO TÚNG (ĂN XỔI RỒI CHẾT)</span>
-                    <div class="media-thumb" style="width:74px; height:46px;" onclick="openCustomLightbox('assets/p145_monetization_near_miss.jpg', 'Lằn ranh đạo đức tại điểm chào gói +5 Moves (Day 3 p.145)')">
+                    <div class="media-thumb" style="width:74px; height:46px;" onclick="openCustomLightbox('assets/p145_monetization_near_miss.jpg', 'Lằn ranh đạo đức tại điểm chào gói +5 Moves')">
                       <img src="${resolveAsset('assets/p145_monetization_near_miss.jpg')}" alt="Monetization Ethics" />
                     </div>
                   </div>
@@ -5778,15 +5810,304 @@
     const overviewHeading = document.getElementById("overview-heading");
     const slideCounter = document.getElementById("slide-counter");
     const progressFill = document.getElementById("progress-fill");
+    const notesDrawer = document.getElementById("notes-drawer");
+    const notesContent = document.getElementById("notes-content");
+    const notesBridge = document.getElementById("notes-bridge");
+    const btnNotes = document.getElementById("btn-notes");
     const overviewModal = document.getElementById("overview-modal");
     const lightboxModal = document.getElementById("lightbox-modal");
     const lightboxContent = document.getElementById("lightbox-content");
     const lightboxCaption = document.getElementById("lightbox-caption");
     const btnShort = document.getElementById("btn-short");
     const btnOvShort = document.getElementById("btn-ov-short");
+    const deckCanvas = document.getElementById("deck-canvas");
+    const elasticCanvas = document.getElementById("elasticCanvas");
 
     let currentSlideId = 1;
     let isShortMode = false;
+
+    class SoftSurface3DEngine {
+      constructor(canvas, inputElement) {
+        this.canvas = canvas;
+        this.inputElement = inputElement;
+        this.context = canvas.getContext("2d", { alpha: true });
+        this.motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        this.finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+        this.surfaceEnabled = this.finePointerQuery.matches && !this.motionQuery.matches;
+        this.rippleEnabled = !this.motionQuery.matches;
+        this.width = 0;
+        this.height = 0;
+        this.dpr = 1;
+        this.spacing = 31;
+        this.columns = 0;
+        this.rows = 0;
+        this.xs = new Float32Array(0);
+        this.ys = new Float32Array(0);
+        this.z = new Float32Array(0);
+        this.nextZ = new Float32Array(0);
+        this.velocity = new Float32Array(0);
+        this.nextVelocity = new Float32Array(0);
+        this.pointerActive = false;
+        this.pointerX = 0;
+        this.pointerY = 0;
+        this.targetX = 0;
+        this.targetY = 0;
+        this.yaw = 0;
+        this.pitch = 0;
+        this.targetYaw = 0;
+        this.targetPitch = 0;
+        this.ripples = [];
+        this.frame = 0;
+        this.lastFrameTime = 0;
+        this.colorStops = [
+          { at: 0, color: [86, 101, 119] },
+          { at: 0.34, color: [52, 211, 153] },
+          { at: 0.68, color: [250, 204, 21] },
+          { at: 1, color: [251, 113, 133] }
+        ];
+
+        if (!this.context) {
+          console.error("Canvas 2D context is unavailable; soft surface animation is disabled.");
+          this.surfaceEnabled = false;
+          this.rippleEnabled = false;
+          return;
+        }
+
+        this.resize();
+        this.inputElement.addEventListener("pointermove", event => this.handlePointerMove(event));
+        this.inputElement.addEventListener("pointerleave", () => this.handlePointerLeave());
+        this.inputElement.addEventListener("pointerdown", event => this.handlePointerDown(event));
+        window.addEventListener("resize", () => this.resize());
+        this.motionQuery.addEventListener("change", event => {
+          this.surfaceEnabled = this.finePointerQuery.matches && !event.matches;
+          this.rippleEnabled = !event.matches;
+          if (event.matches) {
+            this.pointerActive = false;
+            this.ripples.length = 0;
+            if (this.frame) cancelAnimationFrame(this.frame);
+            this.frame = 0;
+            this.context.clearRect(0, 0, this.width, this.height);
+          } else if (this.surfaceEnabled) {
+            this.wake();
+          }
+        });
+      }
+
+      resize() {
+        const bounds = this.inputElement.getBoundingClientRect();
+        this.width = bounds.width || window.innerWidth;
+        this.height = bounds.height || window.innerHeight;
+        this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+        this.canvas.width = Math.round(this.width * this.dpr);
+        this.canvas.height = Math.round(this.height * this.dpr);
+        this.context.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+        this.buildGrid();
+        if (this.surfaceEnabled) this.wake();
+      }
+
+      buildGrid() {
+        this.columns = Math.ceil(this.width / this.spacing) + 1;
+        this.rows = Math.ceil(this.height / this.spacing) + 1;
+        const count = this.columns * this.rows;
+        this.xs = new Float32Array(count);
+        this.ys = new Float32Array(count);
+        this.z = new Float32Array(count);
+        this.nextZ = new Float32Array(count);
+        this.velocity = new Float32Array(count);
+        this.nextVelocity = new Float32Array(count);
+
+        const offsetX = (this.width - (this.columns - 1) * this.spacing) / 2;
+        const offsetY = (this.height - (this.rows - 1) * this.spacing) / 2;
+        for (let row = 0; row < this.rows; row += 1) {
+          for (let column = 0; column < this.columns; column += 1) {
+            const index = row * this.columns + column;
+            this.xs[index] = offsetX + column * this.spacing;
+            this.ys[index] = offsetY + row * this.spacing;
+          }
+        }
+      }
+
+      handlePointerMove(event) {
+        if (!this.surfaceEnabled || (event.pointerType !== "mouse" && event.pointerType !== "pen")) return;
+        const bounds = this.inputElement.getBoundingClientRect();
+        this.targetX = event.clientX - bounds.left;
+        this.targetY = event.clientY - bounds.top;
+        this.pointerActive = true;
+        this.targetYaw = ((this.targetX / this.width) - 0.5) * 0.035;
+        this.targetPitch = (0.5 - (this.targetY / this.height)) * 0.025;
+        this.wake();
+      }
+
+      handlePointerLeave() {
+        if (!this.surfaceEnabled) return;
+        this.pointerActive = false;
+        this.targetYaw = 0;
+        this.targetPitch = 0;
+        this.wake();
+      }
+
+      handlePointerDown(event) {
+        if (!this.rippleEnabled || !["mouse", "pen", "touch"].includes(event.pointerType)) return;
+        const bounds = this.inputElement.getBoundingClientRect();
+        this.addRipple(event.clientX - bounds.left, event.clientY - bounds.top);
+      }
+
+      addRipple(x = this.width / 2, y = this.height / 2) {
+        if (!this.rippleEnabled) return;
+        this.ripples.push({ x, y, age: 0, amplitude: 15 });
+        this.wake();
+      }
+
+      wake() {
+        if (!this.context || this.frame) return;
+        this.frame = requestAnimationFrame(time => this.animate(time));
+      }
+
+      updatePhysics(deltaTime) {
+        const dt = Math.min(deltaTime, 0.032) * 60;
+        const damping = Math.pow(0.82, dt);
+        this.pointerX += (this.targetX - this.pointerX) * 0.18;
+        this.pointerY += (this.targetY - this.pointerY) * 0.18;
+        this.yaw += (this.targetYaw - this.yaw) * 0.08;
+        this.pitch += (this.targetPitch - this.pitch) * 0.08;
+
+        for (let rippleIndex = this.ripples.length - 1; rippleIndex >= 0; rippleIndex -= 1) {
+          this.ripples[rippleIndex].age += deltaTime;
+          if (this.ripples[rippleIndex].age > 1.35) this.ripples.splice(rippleIndex, 1);
+        }
+
+        let maxEnergy = 0;
+        const pointerRadius = 142;
+        const pointerRadiusSquared = pointerRadius * pointerRadius;
+        for (let row = 0; row < this.rows; row += 1) {
+          for (let column = 0; column < this.columns; column += 1) {
+            const index = row * this.columns + column;
+            let targetHeight = 0;
+            const dx = this.xs[index] - this.pointerX;
+            const dy = this.ys[index] - this.pointerY;
+            const distanceSquared = dx * dx + dy * dy;
+
+            if (this.surfaceEnabled && this.pointerActive && distanceSquared < pointerRadiusSquared * 9) {
+              targetHeight = 20 * Math.exp(-distanceSquared / (pointerRadiusSquared * 0.62));
+            }
+
+            for (const ripple of this.ripples) {
+              const rippleDx = this.xs[index] - ripple.x;
+              const rippleDy = this.ys[index] - ripple.y;
+              const distance = Math.hypot(rippleDx, rippleDy);
+              const waveRadius = ripple.age * 245;
+              const waveDistance = distance - waveRadius;
+              const waveEnvelope = Math.exp(-(waveDistance * waveDistance) / (2 * 24 * 24));
+              targetHeight += Math.sin(waveDistance / 16) * waveEnvelope * ripple.amplitude * Math.exp(-ripple.age * 2.1);
+            }
+
+            let neighborTotal = 0;
+            let neighborCount = 0;
+            if (column > 0) {
+              neighborTotal += this.z[index - 1];
+              neighborCount += 1;
+            }
+            if (column + 1 < this.columns) {
+              neighborTotal += this.z[index + 1];
+              neighborCount += 1;
+            }
+            if (row > 0) {
+              neighborTotal += this.z[index - this.columns];
+              neighborCount += 1;
+            }
+            if (row + 1 < this.rows) {
+              neighborTotal += this.z[index + this.columns];
+              neighborCount += 1;
+            }
+
+            const neighborAverage = neighborCount ? neighborTotal / neighborCount : this.z[index];
+            const acceleration = (targetHeight - this.z[index]) * 0.13 + (neighborAverage - this.z[index]) * 0.045;
+            const velocity = (this.velocity[index] + acceleration * dt) * damping;
+            const height = this.z[index] + velocity * dt;
+            this.nextVelocity[index] = velocity;
+            this.nextZ[index] = height;
+            maxEnergy = Math.max(maxEnergy, Math.abs(height), Math.abs(velocity));
+          }
+        }
+
+        [this.z, this.nextZ] = [this.nextZ, this.z];
+        [this.velocity, this.nextVelocity] = [this.nextVelocity, this.velocity];
+        return maxEnergy;
+      }
+
+      colorForHeight(height) {
+        const amount = Math.max(0, Math.min(1, height / 20));
+        let start = this.colorStops[0];
+        let end = this.colorStops[this.colorStops.length - 1];
+        for (let index = 1; index < this.colorStops.length; index += 1) {
+          if (amount <= this.colorStops[index].at) {
+            start = this.colorStops[index - 1];
+            end = this.colorStops[index];
+            break;
+          }
+        }
+
+        const range = end.at - start.at || 1;
+        const blend = (amount - start.at) / range;
+        const red = Math.round(start.color[0] + (end.color[0] - start.color[0]) * blend);
+        const green = Math.round(start.color[1] + (end.color[1] - start.color[1]) * blend);
+        const blue = Math.round(start.color[2] + (end.color[2] - start.color[2]) * blend);
+        const alpha = 0.2 + amount * 0.52;
+        return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+      }
+
+      render() {
+        this.context.clearRect(0, 0, this.width, this.height);
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+        const focalLength = Math.max(this.width, this.height) * 1.5;
+        const cosYaw = Math.cos(this.yaw);
+        const sinYaw = Math.sin(this.yaw);
+        const cosPitch = Math.cos(this.pitch);
+        const sinPitch = Math.sin(this.pitch);
+        const radius = 142;
+
+        for (let row = 0; row < this.rows; row += 1) {
+          for (let column = 0; column < this.columns; column += 1) {
+            const index = row * this.columns + column;
+            const height = this.z[index];
+            const dx = this.xs[index] - this.pointerX;
+            const dy = this.ys[index] - this.pointerY;
+            const distance = Math.hypot(dx, dy);
+            const radialPush = height * 0.32 * Math.min(1, distance / radius);
+            const worldX = this.xs[index] - centerX;
+            const worldY = this.ys[index] - centerY;
+            const rotatedX = worldX * cosYaw + height * sinYaw;
+            const yawDepth = -worldX * sinYaw + height * cosYaw;
+            const rotatedY = worldY * cosPitch - yawDepth * sinPitch;
+            const depth = worldY * sinPitch + yawDepth * cosPitch;
+            const perspective = focalLength / (focalLength - depth);
+            const screenX = centerX + rotatedX * perspective + (distance ? dx / distance * radialPush : 0);
+            const screenY = centerY + rotatedY * perspective + (distance ? dy / distance * radialPush : 0) - height * 0.12;
+            const dotRadius = 1.35 + Math.max(0, height) * 0.025;
+
+            this.context.beginPath();
+            this.context.arc(screenX, screenY, dotRadius, 0, Math.PI * 2);
+            this.context.fillStyle = this.colorForHeight(height);
+            this.context.fill();
+          }
+        }
+      }
+
+      animate(time) {
+        this.frame = 0;
+        const deltaTime = this.lastFrameTime ? (time - this.lastFrameTime) / 1000 : 1 / 60;
+        this.lastFrameTime = time;
+        const energy = this.updatePhysics(deltaTime);
+        this.render();
+
+        if ((this.surfaceEnabled && this.pointerActive) || this.ripples.length || energy > 0.08) {
+          this.frame = requestAnimationFrame(nextTime => this.animate(nextTime));
+        } else {
+          this.lastFrameTime = 0;
+        }
+      }
+    }
 
     function getActiveDeckList() {
       return isShortMode ? SLIDES_DATA.filter(s => s.short) : SLIDES_DATA;
@@ -5858,6 +6179,15 @@
         el.classList.toggle("active", idx === currentSlideId);
         el.classList.toggle("near", idx === prevId || idx === nextId);
       });
+      const activeSlide = slidesRoot.querySelector(".slide.active");
+      if (activeSlide && elasticCanvas.parentElement !== activeSlide) {
+        const patternLayer = activeSlide.querySelector(".bg-pattern");
+        if (patternLayer) {
+          patternLayer.after(elasticCanvas);
+        } else {
+          activeSlide.prepend(elasticCanvas);
+        }
+      }
 
       overviewScroll.querySelectorAll(".ov-card").forEach(el => {
         const idx = parseInt(el.getAttribute("data-target"), 10);
@@ -5866,6 +6196,18 @@
 
       slideCounter.textContent = `${pos + 1} / ${list.length}${isShortMode ? ' ⚡' : ''}`;
       progressFill.style.width = `${((pos + 1) / list.length) * 100}%`;
+
+      notesContent.innerHTML = targetSlide.notes || `
+        <p class="notes-lead">🎙️ <strong>${targetSlide.title}</strong></p>
+        <p>Quan sát nội dung trên slide, chốt ý chính rồi chuyển tự nhiên sang phần kế tiếp.</p>
+      `;
+      if (targetSlide.bridge) {
+        notesBridge.hidden = false;
+        notesBridge.textContent = `➜ Chuyển ý: ${targetSlide.bridge}`;
+      } else {
+        notesBridge.hidden = true;
+        notesBridge.textContent = "";
+      }
 
       if (updateHash) {
         history.replaceState(null, "", `#${currentSlideId}`);
@@ -5890,6 +6232,12 @@
       btnShort.textContent = isShortMode ? `⚡ Đang bật ${getActiveDeckList().length} trang (S)` : "⚡ Bản 15p (S)";
       renderOverviewModal();
       goToSlideById(currentSlideId);
+    }
+
+    function toggleNotes(force) {
+      const isOpen = typeof force === "boolean" ? force : !notesDrawer.classList.contains("open");
+      notesDrawer.classList.toggle("open", isOpen);
+      btnNotes.setAttribute("aria-expanded", String(isOpen));
     }
 
     function toggleOverview(force) {
@@ -5939,10 +6287,11 @@
       switch (e.key) {
         case "ArrowRight": case "PageDown": case " ": e.preventDefault(); nextSlide(); break;
         case "ArrowLeft": case "PageUp": e.preventDefault(); prevSlide(); break;
+        case "n": case "N": e.preventDefault(); toggleNotes(); break;
         case "o": case "O": e.preventDefault(); toggleOverview(); break;
         case "s": case "S": e.preventDefault(); toggleShortMode(); break;
         case "f": case "F": e.preventDefault(); toggleFullscreen(); break;
-        case "Escape": break;
+        case "Escape": toggleNotes(false); break;
       }
     });
 
@@ -5950,6 +6299,8 @@
     document.getElementById("btn-next").addEventListener("click", nextSlide);
     document.getElementById("zone-prev").addEventListener("click", prevSlide);
     document.getElementById("zone-next").addEventListener("click", nextSlide);
+    btnNotes.addEventListener("click", () => toggleNotes());
+    document.getElementById("btn-close-notes").addEventListener("click", () => toggleNotes(false));
     document.getElementById("btn-overview").addEventListener("click", () => toggleOverview());
     document.getElementById("btn-close-overview").addEventListener("click", () => toggleOverview(false));
     document.getElementById("btn-short").addEventListener("click", toggleShortMode);
@@ -5957,6 +6308,7 @@
     document.getElementById("btn-fullscreen").addEventListener("click", toggleFullscreen);
     lightboxModal.addEventListener("click", closeLightbox);
 
+    window.softEngine = new SoftSurface3DEngine(elasticCanvas, deckCanvas);
     initDeck();
   </script>
 </body>
