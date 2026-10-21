@@ -64,10 +64,7 @@
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: var(--bg-board);
-      /* Subtle tactile board dot-matrix background instead of generic AI gradient blobs */
-      background-image: radial-gradient(rgba(38, 31, 54, 0.08) 1.5px, transparent 1.5px);
-      background-size: 28px 28px;
+      background: #FBF4E6;
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
@@ -1217,22 +1214,105 @@
       color: var(--ink);
     }
 
-    .source-layout-slide[data-act="8"] {
+    .slide[data-act] {
+      --u: min(calc(100vw / 1920), calc(100vh / 1080));
+    }
+
+    .slide[data-act="1"] {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 184, 0, 0.16), transparent 38%),
+        radial-gradient(circle at 88% 82%, rgba(255, 84, 112, 0.15), transparent 40%),
+        linear-gradient(135deg, #FFF9EC 0%, #FFEFF3 100%);
+    }
+
+    .slide[data-act="2"] {
+      background:
+        radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.15), transparent 38%),
+        radial-gradient(circle at 14% 84%, rgba(16, 185, 129, 0.14), transparent 40%),
+        linear-gradient(135deg, #F8F3FF 0%, #FFF7E8 100%);
+    }
+
+    .slide[data-act="3"] {
+      background:
+        radial-gradient(circle at 18% 20%, rgba(16, 185, 129, 0.16), transparent 38%),
+        radial-gradient(circle at 82% 78%, rgba(255, 184, 0, 0.16), transparent 40%),
+        linear-gradient(135deg, #F0FDF6 0%, #FFF9EB 100%);
+    }
+
+    .slide[data-act="4"] {
+      background:
+        radial-gradient(circle at 20% 80%, rgba(255, 84, 112, 0.16), transparent 42%),
+        radial-gradient(circle at 80% 18%, rgba(139, 92, 246, 0.16), transparent 40%),
+        linear-gradient(135deg, #FFF2F5 0%, #F4EEFF 100%);
+    }
+
+    .slide[data-act="5"] {
+      background:
+        radial-gradient(circle at 15% 22%, rgba(255, 184, 0, 0.18), transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.16), transparent 40%),
+        linear-gradient(135deg, #FFFBEB 0%, #ECFDF5 100%);
+    }
+
+    .slide[data-act="6"] {
+      background:
+        radial-gradient(circle at 82% 22%, rgba(255, 84, 112, 0.14), transparent 38%),
+        radial-gradient(circle at 18% 78%, rgba(59, 130, 246, 0.14), transparent 38%),
+        linear-gradient(135deg, #F2F7FF 0%, #FFF4F6 100%);
+    }
+
+    .slide[data-act="7"] {
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255, 184, 0, 0.18), transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(139, 92, 246, 0.16), transparent 40%),
+        linear-gradient(135deg, #FFF9EB 0%, #F5F0FF 100%);
+    }
+
+    .slide[data-act="8"] {
       background:
         radial-gradient(circle at 16% 80%, rgba(16, 185, 129, 0.16), transparent 40%),
         radial-gradient(circle at 84% 20%, rgba(255, 84, 112, 0.16), transparent 40%),
-        radial-gradient(rgba(36, 28, 53, 0.07) 2px, transparent 2px),
         linear-gradient(135deg, #EEFCF6 0%, #FFF2F5 100%);
-      background-size: 100% 100%, 100% 100%, calc(34 * var(--u)) calc(34 * var(--u)), 100% 100%;
     }
 
-    .source-layout-slide[data-act="9"] {
+    .slide[data-act="9"] {
       background:
         radial-gradient(circle at 50% 15%, rgba(255, 184, 0, 0.22), transparent 48%),
         radial-gradient(circle at 85% 82%, rgba(16, 185, 129, 0.18), transparent 40%),
-        radial-gradient(rgba(36, 28, 53, 0.08) 2px, transparent 2px),
         linear-gradient(135deg, #FFF7E2 0%, #F1EEFF 100%);
-      background-size: 100% 100%, 100% 100%, calc(34 * var(--u)) calc(34 * var(--u)), 100% 100%;
+    }
+
+    .slide[data-act="1"] .bg-pattern,
+    .slide[data-act="9"] .bg-pattern {
+      background-image: radial-gradient(rgba(36, 28, 53, 0.08) 2px, transparent 2px);
+      background-size: calc(34 * var(--u)) calc(34 * var(--u));
+    }
+
+    .slide[data-act="3"] .bg-pattern {
+      background-image: radial-gradient(rgba(36, 28, 53, 0.07) 2px, transparent 2px);
+      background-size: calc(32 * var(--u)) calc(32 * var(--u));
+    }
+
+    .slide[data-act="5"] .bg-pattern,
+    .slide[data-act="8"] .bg-pattern {
+      background-image: radial-gradient(rgba(36, 28, 53, 0.07) 2px, transparent 2px);
+      background-size: calc(34 * var(--u)) calc(34 * var(--u));
+    }
+
+    .slide[data-act="6"] .bg-pattern {
+      background-image: radial-gradient(rgba(36, 28, 53, 0.07) 2px, transparent 2px);
+      background-size: calc(30 * var(--u)) calc(30 * var(--u));
+    }
+
+    .slide[data-act="2"] .bg-pattern {
+      background-image: repeating-linear-gradient(45deg, rgba(36, 28, 53, 0.03) 0px, rgba(36, 28, 53, 0.03) calc(18 * var(--u)), transparent calc(18 * var(--u)), transparent calc(36 * var(--u)));
+    }
+
+    .slide[data-act="4"] .bg-pattern {
+      background-image: repeating-linear-gradient(-45deg, rgba(36, 28, 53, 0.03) 0px, rgba(36, 28, 53, 0.03) calc(20 * var(--u)), transparent calc(20 * var(--u)), transparent calc(40 * var(--u)));
+    }
+
+    .slide[data-act="7"] .bg-pattern {
+      background-image: repeating-linear-gradient(45deg, rgba(36, 28, 53, 0.028) 0px, rgba(36, 28, 53, 0.028) calc(22 * var(--u)), transparent calc(22 * var(--u)), transparent calc(44 * var(--u)));
     }
 
     .source-layout-slide .bg-deco {
@@ -1241,6 +1321,28 @@
       z-index: 0;
       overflow: hidden;
       pointer-events: none;
+    }
+
+    .bg-pattern {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .slide > .bg-pattern {
+      position: absolute;
+      z-index: 0;
+    }
+
+    .slide.active .bg-pattern {
+      filter: url(#soft-bulge-filter);
+    }
+
+    @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) {
+      .slide.active .bg-pattern {
+        filter: none;
+      }
     }
 
     .source-layout-slide .deco-item {
@@ -2058,6 +2160,23 @@
 </head>
 
 <body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute; overflow:hidden;">
+    <defs>
+      <filter id="soft-bulge-filter" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+        <feImage href="#bulge-displacement-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="bulge-map" />
+        <feDisplacementMap id="bulge-displacement" in="SourceGraphic" in2="bulge-map" scale="0" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+  <svg id="bulge-displacement-map" aria-hidden="true" width="100" height="100" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:fixed; left:-120px; top:-120px; pointer-events:none;">
+    <defs>
+      <radialGradient id="bulge-displacement-gradient" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="16%">
+        <stop offset="0" stop-color="#FFFFFF" />
+        <stop offset="1" stop-color="#808080" />
+      </radialGradient>
+    </defs>
+    <rect width="100" height="100" fill="url(#bulge-displacement-gradient)" />
+  </svg>
   <div id="viewport">
     <main id="deck-canvas" aria-label="Level Design Foundations">
       <div id="slides-root"></div>
@@ -3403,6 +3522,7 @@
       const c1 = colors[slideId % 4];
       const c2 = colors[(slideId + 2) % 4];
       return `
+        <div class="bg-pattern" aria-hidden="true"></div>
         <div class="bg-deco" aria-hidden="true">
           <svg class="deco-item deco-float-1" style="top:3%; right:3%; width:calc(56 * var(--u)); height:calc(56 * var(--u));" viewBox="0 0 64 64">
             <polygon points="32,4 58,24 48,58 16,58 6,24" fill="${c1}" stroke="#241C35" stroke-width="4" stroke-linejoin="round"/>
@@ -3425,6 +3545,10 @@
     function buildSlideHTML(s) {
       const isSourceLayout = ["s29_ray_dda15", "s30_arcade_ethics", "s31_poster_towers"].includes(s.layout);
       const sourceAct = s.layout === "s31_poster_towers" ? 9 : 8;
+      const slideAct = isSourceLayout
+        ? sourceAct
+        : Number(s.kicker.match(/Chặng\s+(\d+)/)?.[1] || 1);
+      const bgPattern = isSourceLayout ? "" : `<div class="bg-pattern" aria-hidden="true"></div>`;
       const topBar = isSourceLayout ? `
         <header class="slide-top">
           <div class="ribbon-title-wrap">
@@ -3499,7 +3623,7 @@
               </div>
             </div>
           `;
-          return `<section class="slide" data-index="${s.id}">${stage}</section>`;
+          return `<section class="slide" data-index="${s.id}" data-act="${slideAct}" aria-label="${(s.title || '').replace(/"/g, '&quot;')}">${bgPattern}${stage}</section>`;
         }
 
         // 2. SAGA MAP 9 TRẠM
@@ -5641,9 +5765,9 @@
       }
 
       const sourceClass = isSourceLayout ? " source-layout-slide" : "";
-      const sourceAttrs = isSourceLayout ? ` data-act="${sourceAct}" data-layout="${s.layoutCode}"` : "";
+      const sourceAttrs = ` data-act="${slideAct}"${isSourceLayout ? ` data-layout="${s.layoutCode}"` : ""}`;
       const sourceDecorations = isSourceLayout ? renderSourceBgDecorations(s.id) : "";
-      return `<section class="slide${sourceClass}" data-index="${s.id}"${sourceAttrs} aria-label="${(s.title || '').replace(/"/g, '&quot;')}">${sourceDecorations}${stage}</section>`;
+      return `<section class="slide${sourceClass}" data-index="${s.id}"${sourceAttrs} aria-label="${(s.title || '').replace(/"/g, '&quot;')}">${bgPattern}${sourceDecorations}${stage}</section>`;
     }
 
     /* ==========================================================================
