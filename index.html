@@ -3248,38 +3248,12 @@
             <li><strong>Tính độc lập biện chứng:</strong> 4 nút hoàn toàn tách rời nhau (Khó mà đơn giản, Phức tạp mà dễ, Mới lạ không cần khó, Đa dạng không cần thêm luật mới).</li>
           </ul>
         `,
-        bridge: "Có 4 đòn bẩy tinh vi trong tay rồi, nhưng điều gì sẽ xảy ra nếu Level Designer vô tình kéo cả 4 nút lên cùng lúc? Hãy nhìn vào cạm bẫy chết người ở trang sau."
+        bridge: "Đã có bàn mixer 4 kênh trong tay, giờ hãy đi sâu giải mã bản chất và nguyên tắc Nên/Tránh của từng đòn bẩy — bắt đầu với đòn bẩy #1: Difficulty."
       },
 
-      // S08 — Cạm bẫy Stress Stacking (Chú gấu Day 3 p.19)
+      // S08 (MỚI) — Giải thích chi tiết Đòn bẩy #1: Difficulty (Day 3 Trang 16–18, 20)
       {
         id: 8,
-        kicker: "Chặng 2 • Bẫy thiết kế",
-        title: "Xếp chồng áp lực: khi cả bốn đòn bẩy cùng bị kéo lên",
-        layout: "stress_stacking_trap",
-        short: false,
-        image: { file: "assets/p019_stress_stacking_bear.jpg", caption: "Bẫy Stress Stacking: Chồng cả 4 tảng đá lên người chơi cùng lúc" },
-        explain: "Kéo cả bốn đòn bẩy lên đỉnh cùng lúc: áp lực nhân lên chứ không chỉ cộng lại.",
-        rocks: [
-          { icon: "🔥", name: "Độ khó ↑", tone: "tile-diff", desc: "Bớt nước đi, ép thời gian" },
-          { icon: "🧩", name: "Độ phức tạp ↑", tone: "tile-comp", desc: "Nhồi thêm cơ chế mới" },
-          { icon: "⭐", name: "Mới lạ ↑", tone: "tile-nov", desc: "Đổi luật quá đột ngột" },
-          { icon: "🎨", name: "Đa dạng ↑", tone: "tile-var", desc: "Bố cục bàn cờ bị bó hẹp" }
-        ],
-        hint: { en: "Luân phiên các đòn bẩy; chỉ xếp chồng ở cuối game", vn: "Chỉ khi người chơi đã thành thạo mọi hệ thống, lúc đó mới được kéo nhiều đòn bẩy cùng lúc." },
-        notes: `
-          <p class="notes-lead">🚨 <strong>Cạm bẫy Stress Stacking:</strong> Chồng cả 4 tảng đá lên người chơi cùng lúc.</p>
-          <ul>
-            <li><strong>Cơ chế của bẫy:</strong> Khi gộp mọi thứ vào chữ "Khó", Designer vô thức đẩy cả 4 đòn bẩy lên đỉnh cùng một lúc: vừa bớt lượt, vừa thêm luật mới, vừa đổi cơ chế lạ, vừa cắt xẻ bàn cờ.</li>
-            <li><strong>Hậu quả:</strong> Tải nhận thức (Cognitive load) không chỉ cộng thêm mà <em>nhân lên theo cấp số nhân</em>. Người chơi rơi vào trạng thái quá tải kéo dài (Sustained Overload): <strong>Fail → Fail → Fail → CHURN!</strong></li>
-            <li><strong>Quy tắc vàng tối thượng:</strong> <mark>Rotate levers, save stacking for the elder game</mark> — Luân phiên xoay vòng các đòn bẩy, tuyệt đối không kéo cả 4 đòn bẩy lên đỉnh cùng một lúc! Việc xếp chồng chỉ dành riêng cho giai đoạn cuối game khi người chơi đã là cao thủ.</li>
-          </ul>
-        `,
-        bridge: "Để không bao giờ mắc bẫy Stress Stacking, bây giờ chúng ta sẽ đi sâu giải mã bản chất và nguyên tắc Nên/Tránh của từng đòn bẩy — bắt đầu với đòn bẩy #1: Difficulty."
-      },
-      // S09 (MỚI) — Giải thích chi tiết Đòn bẩy #1: Difficulty (Day 3 Trang 16–18, 20)
-      {
-        id: 9,
         kicker: "Chặng 2 • Giải mã đòn bẩy 1",
         title: "Độ khó (Difficulty): kiểm soát tỉ lệ thua và cảm xúc",
         lever: "difficulty",
@@ -3304,9 +3278,9 @@
         bridge: "Khi đã hiểu rõ 4 nút vặn cơ học của Difficulty, hãy xem những nguyên tắc Nên làm và Cạm bẫy chết người cần tránh ở trang tiếp theo."
       },
 
-      // S10 — Difficulty: Nên làm & Tránh xa (Phone Showcase + Minh họa Homescapes p.15)
+      // S09 — Difficulty: Nên làm & Tránh xa (Phone Showcase + Minh họa Homescapes p.15)
       {
-        id: 10,
+        id: 9,
         kicker: "Chặng 2 • Nguyên tắc độ khó",
         title: "Độ khó: siết nguồn lực, đừng làm người chơi bối rối",
         lever: "difficulty",
@@ -3338,9 +3312,9 @@
         bridge: "Vậy trong thực tế sản xuất, các màn Dễ và Khó được sắp xếp theo đường biểu diễn nhịp độ (Cadence) như thế nào? Hãy nhìn vào sơ đồ ở trang tiếp theo."
       },
 
-      // S11 — Hint của Difficulty: Đường biểu diễn Nhịp độ tiêu chuẩn (E-E-E-H-E-E-E-SH)
+      // S10 — Hint của Difficulty: Đường biểu diễn Nhịp độ tiêu chuẩn (E-E-E-H-E-E-E-SH)
       {
-        id: 11,
+        id: 10,
         kicker: "Chặng 2 • Nhịp chơi độ khó",
         title: "Nhịp chuẩn: ít nhất ba màn dễ lấy đà trước một màn khó",
         layout: "hint_diff_cadence",
@@ -3356,9 +3330,9 @@
         bridge: "Nếu Difficulty dùng để điều tiết nhịp thở căng – chùng, thì khi muốn mở rộng chiều sâu tư duy của trò chơi, ta phải chuyển sang đòn bẩy #2: Complexity."
       },
 
-      // S12 (MỚI) — Giải thích chi tiết Đòn bẩy #2: Complexity (Day 3 Trang 16–18, 21)
+      // S11 (MỚI) — Giải thích chi tiết Đòn bẩy #2: Complexity (Day 3 Trang 16–18, 21)
       {
-        id: 12,
+        id: 11,
         kicker: "Chặng 2 • Giải mã đòn bẩy 2",
         title: "Độ phức tạp (Complexity): thêm quy tắc để người chơi nghĩ sâu hơn",
         lever: "complexity",
@@ -3383,9 +3357,9 @@
         bridge: "Vì Complexity tiêu tốn năng lượng não bộ rất lớn, nên khi tăng Complexity chúng ta phải tuân thủ nghiêm ngặt những nguyên tắc nào? Xem ngay ở trang tiếp theo."
       },
 
-      // S13 — Complexity: Nên làm & Tránh xa (Phone Showcase + Minh họa p026_img0_800x999.jpg)
+      // S12 — Complexity: Nên làm & Tránh xa (Phone Showcase + Minh họa p026_img0_800x999.jpg)
       {
-        id: 13,
+        id: 12,
         kicker: "Chặng 2 • Nguyên tắc độ phức tạp",
         title: "Độ phức tạp: dạy luật mới thì phải nới tay",
         lever: "complexity",
@@ -3414,9 +3388,9 @@
         bridge: "Nhưng làm sao Designer biết chắc người chơi đã thực sự 'thuộc bài' ở bậc thang cũ để sẵn sàng học tiếp cơ chế mới? Hãy xem sơ đồ bậc thang củng cố và 4 tín hiệu đo lường ở trang sau."
       },
 
-      // S14 — 4 Tín hiệu thuộc bài (Stairs Mastery — từ v3 slide 9)
+      // S13 — 4 Tín hiệu thuộc bài (Stairs Mastery — từ v3 slide 9)
       {
-        id: 14,
+        id: 13,
         kicker: "Chặng 2 • Đo mức thuần thục",
         title: "Đợi đủ bốn tín hiệu thuộc bài rồi mới dạy luật mới",
         layout: "stairs_mastery",
@@ -3431,9 +3405,9 @@
         bridge: "Hãy nhìn trực quan quy tắc Bậc thang củng cố trên đồ thị ở trang ngay sau đây."
       },
 
-      // S15 — Biểu đồ Bậc thang Củng cố (Consolidation Staircase — từ v3 slide 10)
+      // S14 — Biểu đồ Bậc thang Củng cố (Consolidation Staircase — từ v3 slide 10)
       {
-        id: 15,
+        id: 14,
         kicker: "Chặng 2 • Đo mức thuần thục",
         title: "Quy tắc bậc thang: dạy luật mới xong phải luyện ba đến năm màn",
         layout: "staircase_chart",
@@ -3446,9 +3420,9 @@
         bridge: "Nếu cứ học luật mới rồi giải bài tập mãi thì não cũng mệt. Làm sao để tạo ra những cú hích cảm xúc bất ngờ? Đó là nhiệm vụ của đòn bẩy #3: Novelty."
       },
 
-      // S16 (MỚI) — Giải thích chi tiết Đòn bẩy #3: Novelty (Day 3 Trang 16–18, 22)
+      // S15 (MỚI) — Giải thích chi tiết Đòn bẩy #3: Novelty (Day 3 Trang 16–18, 22)
       {
-        id: 16,
+        id: 15,
         kicker: "Chặng 2 • Giải mã đòn bẩy 3",
         title: "Tính mới lạ (Novelty): đổi gió để người chơi không chán",
         lever: "novelty",
@@ -3474,9 +3448,9 @@
         bridge: "Để món tráng miệng Novelty phát huy tối đa sức hút mà không phản tác dụng, hãy xem bộ quy tắc Nên làm và Tránh xa ở trang tiếp theo."
       },
 
-      // S17 — Novelty: Nên làm & Tránh xa (Phone Showcase)
+      // S16 — Novelty: Nên làm & Tránh xa (Phone Showcase)
       {
-        id: 17,
+        id: 16,
         kicker: "Chặng 2 • Nguyên tắc tính mới lạ",
         title: "Tính mới lạ: món tráng miệng, đến rồi đi",
         lever: "novelty",
@@ -3505,9 +3479,9 @@
         bridge: "Rất nhiều Designer hay nhầm lẫn giữa việc thêm Novelty và thêm Complexity. Hãy đặt 2 đường biểu diễn của chúng cạnh nhau ở trang tiếp theo để phân biệt rõ ràng."
       },
 
-      // S18 — Hint của Novelty: Đối chiếu đường đi của Complexity (Ở lại) vs Novelty (Ghé chơi rồi đi)
+      // S17 — Hint của Novelty: Đối chiếu đường đi của Complexity (Ở lại) vs Novelty (Ghé chơi rồi đi)
       {
-        id: 18,
+        id: 17,
         kicker: "Chặng 2 • Phân biệt mới lạ và phức tạp",
         title: "Độ phức tạp ở lại lâu dài, tính mới lạ chỉ ghé chơi rồi đi",
         layout: "hint_nov_vs_comp",
@@ -3523,9 +3497,9 @@
         bridge: "Novelty chỉ thỉnh thoảng mới ghé thăm như món tráng miệng. Vậy cái gì mới là thứ nuôi sống trải nghiệm hàng ngày qua hàng nghìn màn? Chính là đòn bẩy #4: Variety."
       },
 
-      // S19 (MỚI) — Giải thích chi tiết Đòn bẩy #4: Variety (Day 3 Trang 16–18, 23)
+      // S18 (MỚI) — Giải thích chi tiết Đòn bẩy #4: Variety (Day 3 Trang 16–18, 23)
       {
-        id: 19,
+        id: 18,
         kicker: "Chặng 2 • Giải mã đòn bẩy 4",
         title: "Tính đa dạng (Variety): đòn bẩy dùng liên tục để mỗi màn không lặp",
         lever: "variety",
@@ -3550,9 +3524,9 @@
         bridge: "Vậy làm sao để tạo ra Variety thực chất trên bàn cờ thay vì rơi vào cái bẫy 'bình mới rượu cũ'? Hãy xem trang tiếp theo."
       },
 
-      // S20 — Variety: Nên làm & Tránh xa (Phone Showcase)
+      // S19 — Variety: Nên làm & Tránh xa (Phone Showcase)
       {
-        id: 20,
+        id: 19,
         kicker: "Chặng 2 • Nguyên tắc đa dạng",
         title: "Tính đa dạng: phối lại nguyên liệu cũ trước khi đòi món mới",
         lever: "variety",
@@ -3581,9 +3555,9 @@
         bridge: "Nhưng pha trộn giữa cái quen thuộc và cái biến tấu theo tỷ lệ nào là vừa đẹp? Và nếu game của bạn thuần giải đố không có cốt truyện hay trang trí nhà cửa thì lấy gì tạo Variety? Xem ngay ở trang tiếp theo."
       },
 
-      // S21 — Hint của Variety: Tỷ lệ vàng 80/20 & Bộ công cụ cho game không có cốt truyện/thẩm mỹ (Đã bổ sung ảnh & chi tiết lấp đầy 3 thẻ dưới)
+      // S20 — Hint của Variety: Tỷ lệ vàng 80/20 & Bộ công cụ cho game không có cốt truyện/thẩm mỹ (Đã bổ sung ảnh & chi tiết lấp đầy 3 thẻ dưới)
       {
-        id: 21,
+        id: 20,
         kicker: "Chặng 2 • Cách tạo đa dạng",
         title: "Tỉ lệ tham khảo 80/20 và cách tạo đa dạng khi không có cốt truyện",
         layout: "hint_var_toolkit",
@@ -3601,9 +3575,9 @@
         bridge: "Sau khi nắm rõ từng đòn bẩy riêng lẻ, điều gì sẽ xảy ra khi việc vặn một đòn bẩy vô tình kéo theo các đòn bẩy khác? Hãy xem 5 tổ hợp tương tác chéo ở trang tiếp theo."
       },
 
-      // S22 (TÁCH MỚI TỪ TRANG 14 CŨ) — 5 Tổ hợp tương tác có khả năng xảy ra (Day 3 Trang 24)
+      // S21 (TÁCH MỚI TỪ TRANG 14 CŨ) — 5 Tổ hợp tương tác có khả năng xảy ra (Day 3 Trang 24)
       {
-        id: 22,
+        id: 21,
         kicker: "Chặng 2 • Tương tác giữa các đòn bẩy",
         title: "Kéo một đòn bẩy, đòn khác cũng động: 5 kiểu tương tác thường gặp",
         layout: "levers_interactions",
@@ -3660,9 +3634,35 @@
             <li><strong>5. Thêm áp lực thời gian (Time pressure):</strong> Tạo ra <mark>Variety</mark> đồng thời đẩy vọt <mark>Emotional Difficulty (Độ khó cảm xúc)</mark>.</li>
           </ul>
         `,
-        bridge: "Từ 5 phản ứng dây chuyền này, chúng ta đúc kết lại toàn bộ Chặng 2 vào Bảng ma trận tổng kết 4 đòn bẩy ở trang tiếp theo."
+        bridge: "5 phản ứng dây chuyền cho thấy chỉ cần kéo một đòn bẩy là các đòn khác cũng động. Vậy điều gì xảy ra nếu Designer kéo cả 4 cùng lúc? Hãy xem cạm bẫy Stress Stacking ở trang sau."
       },
 
+      // S22 — Cạm bẫy Stress Stacking (Chú gấu Day 3 p.19)
+      {
+        id: 22,
+        kicker: "Chặng 2 • Bẫy thiết kế",
+        title: "Xếp chồng áp lực: khi cả bốn đòn bẩy cùng bị kéo lên",
+        layout: "stress_stacking_trap",
+        short: false,
+        image: { file: "assets/p019_stress_stacking_bear.jpg", caption: "Bẫy Stress Stacking: Chồng cả 4 tảng đá lên người chơi cùng lúc" },
+        explain: "Kéo cả bốn đòn bẩy lên đỉnh cùng lúc: áp lực nhân lên chứ không chỉ cộng lại.",
+        rocks: [
+          { icon: "🔥", name: "Độ khó ↑", tone: "tile-diff", desc: "Bớt nước đi, ép thời gian" },
+          { icon: "🧩", name: "Độ phức tạp ↑", tone: "tile-comp", desc: "Nhồi thêm cơ chế mới" },
+          { icon: "⭐", name: "Mới lạ ↑", tone: "tile-nov", desc: "Đổi luật quá đột ngột" },
+          { icon: "🎨", name: "Đa dạng ↑", tone: "tile-var", desc: "Bố cục bàn cờ bị bó hẹp" }
+        ],
+        hint: { en: "Luân phiên các đòn bẩy; chỉ xếp chồng ở cuối game", vn: "Chỉ khi người chơi đã thành thạo mọi hệ thống, lúc đó mới được kéo nhiều đòn bẩy cùng lúc." },
+        notes: `
+          <p class="notes-lead">🚨 <strong>Cạm bẫy Stress Stacking:</strong> Chồng cả 4 tảng đá lên người chơi cùng lúc.</p>
+          <ul>
+            <li><strong>Cơ chế của bẫy:</strong> Khi gộp mọi thứ vào chữ "Khó", Designer vô thức đẩy cả 4 đòn bẩy lên đỉnh cùng một lúc: vừa bớt lượt, vừa thêm luật mới, vừa đổi cơ chế lạ, vừa cắt xẻ bàn cờ.</li>
+            <li><strong>Hậu quả:</strong> Tải nhận thức (Cognitive load) không chỉ cộng thêm mà <em>nhân lên theo cấp số nhân</em>. Người chơi rơi vào trạng thái quá tải kéo dài (Sustained Overload): <strong>Fail → Fail → Fail → CHURN!</strong></li>
+            <li><strong>Quy tắc vàng tối thượng:</strong> <mark>Rotate levers, save stacking for the elder game</mark> — Luân phiên xoay vòng các đòn bẩy, tuyệt đối không kéo cả 4 đòn bẩy lên đỉnh cùng một lúc! Việc xếp chồng chỉ dành riêng cho giai đoạn cuối game khi người chơi đã là cao thủ.</li>
+          </ul>
+        `,
+        bridge: "Đã thấy cạm bẫy khi kéo cả 4 đòn bẩy cùng lúc, hãy đúc kết toàn bộ Chặng 2 vào Bảng ma trận tổng kết 4 đòn bẩy ở trang tiếp theo."
+      },
       // S23 (TÁCH MỚI TỪ TRANG 14 CŨ) — Bảng ma trận tổng kết 4 đòn bẩy
       {
         id: 23,
