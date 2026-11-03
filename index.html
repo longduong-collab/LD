@@ -1082,7 +1082,8 @@
       .click-zone,
       #notes-drawer,
       #overview-modal,
-      #lightbox-modal {
+      #lightbox-modal,
+      #levers-quiz-modal {
         display: none !important;
       }
     }
@@ -2951,6 +2952,579 @@
       color: #FCD34D;
       line-height: 1.3;
     }
+
+    /* ==========================================================================
+       MINI-GAME: THỬ THÁCH TRÍ NHỚ 4 ĐÒN BẨY (SLIDE 23)
+       ========================================================================== */
+    .lq-bar {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 18px);
+      background: linear-gradient(100deg, #261F36 0%, #3A2E53 60%, #4A3A68 100%);
+      border: 3px solid var(--ink);
+      border-radius: 18px;
+      box-shadow: 0 5px 0 var(--ink);
+      padding: clamp(8px, 0.9vh, 12px) clamp(12px, 1.3vw, 18px);
+      color: #FFF9F0;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .lq-bar-icon {
+      width: clamp(38px, 3vw, 46px);
+      height: clamp(38px, 3vw, 46px);
+      border-radius: 13px;
+      background: var(--nov-main);
+      border: 2.5px solid var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px, 1.6vw, 26px);
+      flex-shrink: 0;
+    }
+
+    .lq-bar-copy { min-width: 0; }
+
+    .lq-bar-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(17px, 1.35vw, 23px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #FFF9F0;
+    }
+
+    .lq-bar-sub {
+      font-size: clamp(12px, 0.95vw, 15px);
+      font-weight: 700;
+      color: #D9CFEA;
+      line-height: 1.25;
+      margin-top: 2px;
+    }
+
+    .lq-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+
+    .lq-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 249, 240, 0.28);
+      background: rgba(255, 249, 240, 0.08);
+      color: rgba(255, 249, 240, 0.68);
+      font-size: clamp(12px, 0.92vw, 14.5px);
+      font-weight: 800;
+      white-space: nowrap;
+      transition: all 150ms ease;
+    }
+
+    .lq-chip.is-current {
+      background: var(--lq-color, var(--nov-main));
+      border-color: #FFF9F0;
+      color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(255, 249, 240, 0.16);
+      animation: lqChipGlow 1.6s ease-in-out infinite;
+    }
+
+    .lq-chip.is-done {
+      background: rgba(22, 163, 74, 0.28);
+      border-color: var(--good-main);
+      color: #C9F7D8;
+    }
+
+    .lq-chip.is-done::after {
+      content: "✓";
+      color: var(--good-main);
+      font-weight: 900;
+    }
+
+    .lq-start-btn {
+      flex-shrink: 0;
+      margin-right: 6px;
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(14px, 1.08vw, 18px);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--ink);
+      background: var(--nov-main);
+      border: 3px solid var(--ink);
+      border-radius: 13px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: clamp(8px, 0.9vh, 11px) clamp(14px, 1.2vw, 20px);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      white-space: nowrap;
+    }
+
+    .lq-start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink);
+      background: #FFC933;
+    }
+
+    .lq-start-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
+    /* Các ô nội dung bị giấu trên bảng ma trận — tên tiêu chí vẫn hiện */
+    .levers-quiz-table td { position: relative; }
+
+    .levers-quiz-table tr.quiz-row-locked td[data-lever] {
+      background: repeating-linear-gradient(-45deg, #F3E9D8 0 9px, #E7DAC0 9px 18px) !important;
+      border-style: dashed !important;
+      color: transparent !important;
+      box-shadow: inset 0 0 0 2px rgba(38, 31, 54, 0.06);
+    }
+
+    .levers-quiz-table tr.quiz-row-locked td[data-lever] * { visibility: hidden; }
+
+    .levers-quiz-table tr.quiz-row-locked td[data-lever]::after {
+      content: "❓";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(19px, 1.75vw, 28px);
+      font-weight: 800;
+      color: var(--ink);
+      visibility: visible;
+      text-shadow: 0 2px 0 #FFF9F0;
+      animation: lqMysteryPulse 1.5s ease-in-out infinite;
+    }
+
+    .levers-quiz-table td.quiz-cell-correct {
+      background: var(--good-soft) !important;
+      box-shadow: 0 0 0 4px var(--good-main), 0 4px 0 var(--ink) !important;
+      animation: lqCorrectPop 640ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .levers-quiz-table td.quiz-cell-correct::after {
+      content: "✓";
+      position: absolute;
+      top: 4px;
+      right: 7px;
+      width: 21px;
+      height: 21px;
+      border-radius: 999px;
+      background: var(--good-main);
+      color: #FFFFFF;
+      border: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+      animation: lqCheckIn 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Lớp phủ câu hỏi */
+    #levers-quiz-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 3vw, 48px);
+      background: rgba(24, 19, 36, 0.84);
+      backdrop-filter: blur(7px);
+    }
+
+    #levers-quiz-modal.open { display: flex; }
+
+    #lq-card {
+      position: relative;
+      width: min(100%, 1040px);
+      max-height: 92vh;
+      overflow-y: auto;
+      background: var(--bg-board);
+      border: 4px solid var(--ink);
+      border-radius: 28px;
+      box-shadow: 0 10px 0 var(--ink), 0 34px 80px rgba(0, 0, 0, 0.5);
+      padding: clamp(20px, 2.3vw, 36px);
+      animation: lqCardIn 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .lq-modal-top {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .lq-lever-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      border: 2.5px solid;
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(14px, 1.05vw, 17px);
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .lq-lever-badge .lq-en {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.76em;
+      font-weight: 800;
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .lq-progress-pill,
+    .lq-score-pill {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 2px solid var(--ink);
+      background: #FFFFFF;
+      font-size: clamp(12.5px, 0.95vw, 15px);
+      font-weight: 800;
+      color: var(--ink);
+      box-shadow: 0 2px 0 rgba(38, 31, 54, 0.14);
+    }
+
+    .lq-score-pill { background: var(--nov-soft); }
+
+    .lq-close {
+      margin-left: auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 2.5px solid var(--ink);
+      background: #FFFFFF;
+      color: var(--ink);
+      box-shadow: 0 3px 0 var(--ink);
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .lq-close:hover { background: var(--bad-soft); }
+
+    .lq-question {
+      margin: clamp(14px, 1.6vw, 22px) 0 clamp(14px, 1.5vw, 20px);
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(24px, 2.15vw, 34px);
+      font-weight: 800;
+      line-height: 1.16;
+      color: var(--ink);
+    }
+
+    .lq-question b { color: var(--lq-accent, var(--ink)); }
+
+    .lq-answers {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(10px, 1vw, 14px);
+    }
+
+    .lq-answer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: #FFFFFF;
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: clamp(11px, 1vw, 15px) clamp(13px, 1.2vw, 17px);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(14.5px, 1.12vw, 17.5px);
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+      min-height: 68px;
+    }
+
+    .lq-answer:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink);
+      background: var(--nov-soft);
+    }
+
+    .lq-answer:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
+    .lq-answer:disabled { cursor: default; }
+
+    .lq-answer .lq-key {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      border: 2px solid var(--ink);
+      background: var(--bg-panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Baloo 2', cursive;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .lq-answer.is-wrong {
+      background: var(--bad-soft);
+      border-color: var(--bad-main);
+      box-shadow: 0 4px 0 var(--bad-lip);
+      color: var(--bad-lip);
+      opacity: 0.72;
+      animation: lqShake 420ms ease;
+    }
+
+    .lq-answer.is-wrong .lq-key {
+      background: var(--bad-main);
+      color: #FFFFFF;
+      border-color: var(--bad-lip);
+    }
+
+    .lq-answer.is-correct {
+      background: var(--good-soft);
+      border-color: var(--good-main);
+      box-shadow: 0 0 0 3px var(--good-main), 0 4px 0 var(--good-lip);
+    }
+
+    .lq-answer.is-correct .lq-key {
+      background: var(--good-main);
+      color: #FFFFFF;
+      border-color: var(--good-lip);
+    }
+
+    .lq-answer.is-dim { opacity: 0.42; }
+
+    .lq-feedback {
+      display: none;
+      margin-top: clamp(13px, 1.4vw, 18px);
+      padding: clamp(11px, 1.1vw, 15px) clamp(14px, 1.3vw, 18px);
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      font-size: clamp(14px, 1.08vw, 17px);
+      font-weight: 700;
+      line-height: 1.42;
+      color: var(--ink);
+    }
+
+    .lq-feedback.show {
+      display: block;
+      animation: lqFadeIn 200ms ease;
+    }
+
+    .lq-feedback.ok {
+      background: var(--good-soft);
+      border-color: var(--good-main);
+      box-shadow: 0 4px 0 var(--good-lip);
+    }
+
+    .lq-feedback.no {
+      background: var(--bad-soft);
+      border-color: var(--bad-main);
+      box-shadow: 0 4px 0 var(--bad-lip);
+    }
+
+    .lq-feedback.skip {
+      background: var(--nov-soft);
+      border-color: var(--nov-main);
+      box-shadow: 0 4px 0 var(--nov-lip);
+    }
+
+    .lq-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: clamp(14px, 1.5vw, 20px);
+    }
+
+    .lq-skip {
+      border: none;
+      background: none;
+      padding: 6px 2px;
+      color: var(--ink-muted);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(13px, 0.98vw, 15.5px);
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+
+    .lq-skip:hover { color: var(--bad-lip); }
+
+    .lq-next {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(15px, 1.15vw, 19px);
+      font-weight: 800;
+      color: #FFFFFF;
+      background: var(--good-main);
+      border: 3px solid var(--ink);
+      border-radius: 14px;
+      box-shadow: 0 4px 0 var(--ink);
+      padding: clamp(9px, 0.9vh, 12px) clamp(18px, 1.5vw, 26px);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    .lq-next:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 var(--ink);
+    }
+
+    .lq-next:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 var(--ink);
+    }
+
+    .lq-next:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: 0 4px 0 rgba(38, 31, 54, 0.35);
+    }
+
+    .lq-summary {
+      text-align: center;
+      padding: clamp(10px, 2vw, 26px) clamp(4px, 1vw, 12px);
+    }
+
+    .lq-summary-badge {
+      width: clamp(64px, 6vw, 86px);
+      height: clamp(64px, 6vw, 86px);
+      margin: 0 auto clamp(8px, 1vw, 14px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(32px, 3.2vw, 46px);
+      background: var(--nov-soft);
+      border: 3px solid var(--ink);
+      box-shadow: 0 5px 0 var(--ink);
+    }
+
+    .lq-summary h3 {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(26px, 2.5vw, 38px);
+      font-weight: 800;
+      line-height: 1.12;
+      color: var(--ink);
+    }
+
+    .lq-stars {
+      font-size: clamp(30px, 3vw, 44px);
+      letter-spacing: 4px;
+      line-height: 1.2;
+      margin-top: clamp(6px, 0.8vw, 10px);
+    }
+
+    .lq-score-big {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(30px, 2.8vw, 42px);
+      font-weight: 800;
+      color: var(--ink);
+      margin-top: 4px;
+    }
+
+    .lq-score-big b { color: var(--good-lip); }
+
+    .lq-summary-msg {
+      max-width: 620px;
+      margin: clamp(10px, 1.2vw, 16px) auto 0;
+      font-size: clamp(15px, 1.15vw, 18px);
+      font-weight: 700;
+      line-height: 1.45;
+      color: var(--ink-muted);
+    }
+
+    .lq-summary-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: clamp(18px, 2vw, 28px);
+    }
+
+    .lq-confetti {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+      animation: lqConfettiFly 1.15s cubic-bezier(0.15, 0.65, 0.35, 1) forwards;
+    }
+
+    @keyframes lqChipGlow {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(255, 249, 240, 0.14); }
+      50% { box-shadow: 0 0 0 6px rgba(255, 249, 240, 0.05); }
+    }
+
+    @keyframes lqMysteryPulse {
+      0%, 100% { opacity: 0.62; transform: scale(0.94); }
+      50% { opacity: 1; transform: scale(1.06); }
+    }
+
+    @keyframes lqCorrectPop {
+      0% { transform: scale(0.94); }
+      55% { transform: scale(1.045); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes lqCheckIn {
+      from { opacity: 0; transform: scale(0.4) rotate(-20deg); }
+      to { opacity: 1; transform: scale(1) rotate(0); }
+    }
+
+    @keyframes lqShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    @keyframes lqCardIn {
+      from { opacity: 0; transform: translateY(22px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes lqFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes lqConfettiFly {
+      from { opacity: 1; transform: translate(-50%, 0) rotate(0deg); }
+      to {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px)), var(--dy, -160px)) rotate(var(--rot, 180deg));
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .lq-bar { flex-wrap: wrap; }
+      .lq-chips { order: 3; width: 100%; margin-left: 0; }
+      .lq-start-btn { margin-left: auto; }
+    }
+
+    @media (max-width: 760px) {
+      .lq-answers { grid-template-columns: 1fr; }
+      .lq-start-btn { margin-left: 0; margin-right: 0; width: 100%; }
+      #lq-card { border-radius: 22px; }
+    }
   </style>
 </head>
 
@@ -2990,6 +3564,11 @@
       <div id="lightbox-modal" role="dialog" aria-modal="true">
         <div id="lightbox-content"></div>
         <div id="lightbox-caption"></div>
+      </div>
+
+      <!-- Mini-game kiểm tra trí nhớ 4 đòn bẩy (slide 23) -->
+      <div id="levers-quiz-modal" role="dialog" aria-modal="true" aria-labelledby="lq-question">
+        <div id="lq-card"></div>
       </div>
 
       <footer id="bottom-bar">
@@ -3758,6 +4337,7 @@
         layout: "levers_matrix",
         short: true,
         notes: `
+          <p class="notes-lead">🎮 <strong>Mini-game kiểm tra trí nhớ:</strong> Toàn bộ nội dung bảng đã được giấu sẵn từ đầu, chỉ giữ tên các tiêu chí. Bấm “Bắt đầu” để dò bài. Đúng ngay lần đầu → +1 ⭐ và hàng tương ứng mở ra kèm giải thích; sai → người chọn được thử lại và biết đáp án đó thuộc đòn bẩy nào; đáp án đúng hiện khi chốt hoặc bỏ qua. Hết 4 câu, cả bảng — gồm hàng “Nhịp vận hành” — sẽ mở ra cùng bảng điểm tổng kết. Điều khiển nhanh: phím 1–4 chọn đáp án, Enter sang câu tiếp, Esc tạm dừng.</p>
           <p class="notes-lead">📌 <strong>Bảng tra cứu tổng kết 4 Đòn bẩy & Cạm bẫy Stress Stacking:</strong></p>
           <ul>
             <li><strong>Cạm bẫy Stress Stacking (Xếp chồng áp lực):</strong> Khi Designer không hiểu tính độc lập của 4 đòn bẩy, cố giải quyết mọi thứ bằng cách tăng "Khó", vô tình đẩy cả 4 đòn bẩy lên đỉnh cùng lúc — như hình ảnh chú gấu bị 4 tảng đá lớn đè nghẹt thở.</li>
@@ -5439,8 +6019,24 @@
           stage = `
             ${topBar}
             <div class="slide-stage" style="gap:12px;">
+              <!-- Thanh mini-game -->
+              <div class="lq-bar anim" id="levers-quiz-bar">
+                <div class="lq-bar-icon" aria-hidden="true">🕹️</div>
+                <div class="lq-bar-copy">
+                  <div class="lq-bar-title">Thử thách trí nhớ: 4 đòn bẩy</div>
+                  <div class="lq-bar-sub" id="levers-quiz-status" aria-live="polite">Bảng đã được giấu • 4 câu hỏi • Bấm bắt đầu để dò bài!</div>
+                </div>
+                <div class="lq-chips" aria-hidden="true">
+                  <span class="lq-chip" style="--lq-color:var(--nov-main);">⭐ Mới lạ</span>
+                  <span class="lq-chip" style="--lq-color:var(--comp-main);">🧩 Phức tạp</span>
+                  <span class="lq-chip" style="--lq-color:var(--var-main);">🎨 Đa dạng</span>
+                  <span class="lq-chip" style="--lq-color:var(--diff-main);">🔥 Độ khó</span>
+                </div>
+                <button type="button" class="lq-start-btn" id="levers-quiz-start" onclick="startLeversQuiz()">▶ Bắt đầu</button>
+              </div>
+
               <div class="anim" style="overflow-x:auto; flex:1; min-height:0; display:flex;">
-                <table class="game-table">
+                <table class="game-table levers-quiz-table" id="levers-quiz-table">
                   <thead>
                     <tr>
                       <th style="background:var(--bg-panel); width:14%;">Tiêu chí đối chiếu</th>
@@ -5451,40 +6047,40 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td style="background:var(--bg-panel); font-weight:800;">Mục tiêu tâm lý</td>
-                      <td>Điều khiển tỉ lệ thua và tạo cảm giác muốn phục thù</td>
-                      <td>Tăng lượng phải xử lý, buộc người chơi tìm cách chơi mới</td>
-                      <td>Kéo sự chú ý, phá cảm giác đơn điệu</td>
-                      <td>Giữ cho từng màn đỡ lặp</td>
+                    <tr data-quiz-row="goal">
+                      <td data-quiz-label style="background:var(--bg-panel); font-weight:800;">Mục tiêu tâm lý</td>
+                      <td data-lever="difficulty">Điều khiển tỉ lệ thua và tạo cảm giác muốn phục thù</td>
+                      <td data-lever="complexity">Tăng lượng phải xử lý, buộc người chơi tìm cách chơi mới</td>
+                      <td data-lever="novelty">Kéo sự chú ý, phá cảm giác đơn điệu</td>
+                      <td data-lever="variety">Giữ cho từng màn đỡ lặp</td>
                     </tr>
-                    <tr>
-                      <td style="background:var(--bg-panel); font-weight:800;">Cách vặn nút</td>
-                      <td>Giảm lượt, giảm thời gian, thu hẹp bàn cờ</td>
-                      <td>Thêm cơ chế mới, cho các quy tắc tác động lẫn nhau</td>
-                      <td>Màn thưởng, trò chơi phụ, sự kiện, cơ chế chỉ xuất hiện một lần</td>
-                      <td>Phối lại thứ cũ, đổi dáng bàn cờ, đổi mục tiêu</td>
+                    <tr data-quiz-row="knob">
+                      <td data-quiz-label style="background:var(--bg-panel); font-weight:800;">Cách vặn nút</td>
+                      <td data-lever="difficulty">Giảm lượt, giảm thời gian, thu hẹp bàn cờ</td>
+                      <td data-lever="complexity">Thêm cơ chế mới, cho các quy tắc tác động lẫn nhau</td>
+                      <td data-lever="novelty">Màn thưởng, trò chơi phụ, sự kiện, cơ chế chỉ xuất hiện một lần</td>
+                      <td data-lever="variety">Phối lại thứ cũ, đổi dáng bàn cờ, đổi mục tiêu</td>
                     </tr>
-                    <tr>
+                    <tr data-quiz-row="cadence">
                       <td style="background:var(--bg-panel); font-weight:800;">Nhịp vận hành</td>
-                      <td>Nhịp <b>E–E–E–H–E–E–E–SH</b></td>
-                      <td>Tăng theo bậc thang, có đoạn nghỉ để luyện</td>
-                      <td>Bật lên từng đợt rồi tắt hẳn</td>
-                      <td><b>Dùng liên tục</b> ở mọi màn (80/20)</td>
+                      <td data-lever="difficulty">Nhịp <b>E–E–E–H–E–E–E–SH</b></td>
+                      <td data-lever="complexity">Tăng theo bậc thang, có đoạn nghỉ để luyện</td>
+                      <td data-lever="novelty">Bật lên từng đợt rồi tắt hẳn</td>
+                      <td data-lever="variety"><b>Dùng liên tục</b> ở mọi màn (80/20)</td>
                     </tr>
-                    <tr>
-                      <td style="background:var(--good-soft); font-weight:800; color:#0F6B30;">✅ Chuẩn mực</td>
-                      <td>Tách riêng màn khó; ít nhất ba màn dễ lấy đà</td>
-                      <td>Thuộc luật cũ rồi mới dạy luật mới; cho dư lượt</td>
-                      <td>Đặt lúc áp lực thấp; để người chơi thắng</td>
-                      <td>Khai thác hết tổ hợp cũ trước khi làm cơ chế mới</td>
+                    <tr data-quiz-row="standard">
+                      <td data-quiz-label style="background:var(--good-soft); font-weight:800; color:#0F6B30;">✅ Chuẩn mực</td>
+                      <td data-lever="difficulty">Tách riêng màn khó; ít nhất ba màn dễ lấy đà</td>
+                      <td data-lever="complexity">Thuộc luật cũ rồi mới dạy luật mới; cho dư lượt</td>
+                      <td data-lever="novelty">Đặt lúc áp lực thấp; để người chơi thắng</td>
+                      <td data-lever="variety">Khai thác hết tổ hợp cũ trước khi làm cơ chế mới</td>
                     </tr>
-                    <tr>
-                      <td style="background:var(--bad-soft); font-weight:800; color:#9B1131;">⛔ Cấm kỵ</td>
-                      <td>Tăng đột ngột hoặc dùng sự mơ hồ làm độ khó</td>
-                      <td>Nhồi hai, ba luật mới cùng lúc hoặc trùng màn khó</td>
-                      <td>Ghép với màn khó nhất hoặc tung liên tiếp</td>
-                      <td>Chỉ đổi ảnh nền mà cách chơi không đổi</td>
+                    <tr data-quiz-row="taboo">
+                      <td data-quiz-label style="background:var(--bad-soft); font-weight:800; color:#9B1131;">⛔ Cấm kỵ</td>
+                      <td data-lever="difficulty">Tăng đột ngột hoặc dùng sự mơ hồ làm độ khó</td>
+                      <td data-lever="complexity">Nhồi hai, ba luật mới cùng lúc hoặc trùng màn khó</td>
+                      <td data-lever="novelty">Ghép với màn khó nhất hoặc tung liên tiếp</td>
+                      <td data-lever="variety">Chỉ đổi ảnh nền mà cách chơi không đổi</td>
                     </tr>
                   </tbody>
                 </table>
@@ -7053,6 +7649,436 @@
       }
     }
 
+    /* ==========================================================================
+       MINI-GAME: THỬ THÁCH TRÍ NHỚ 4 ĐÒN BẨY (SLIDE 23)
+       ========================================================================== */
+    const LQ_LEVER_META = {
+      difficulty: { name: "Độ khó", en: "Difficulty", icon: "🔥", color: "var(--diff-main)", soft: "var(--diff-soft)", lip: "var(--diff-lip)" },
+      complexity: { name: "Độ phức tạp", en: "Complexity", icon: "🧩", color: "var(--comp-main)", soft: "var(--comp-soft)", lip: "var(--comp-lip)" },
+      novelty: { name: "Tính mới lạ", en: "Novelty", icon: "⭐", color: "var(--nov-main)", soft: "var(--nov-soft)", lip: "var(--nov-lip)" },
+      variety: { name: "Tính đa dạng", en: "Variety", icon: "🎨", color: "var(--var-main)", soft: "var(--var-soft)", lip: "var(--var-lip)" }
+    };
+
+    const LQ_QUESTIONS = [
+      {
+        lever: "novelty",
+        row: "goal",
+        rowLabel: "Mục tiêu tâm lý",
+        prompt: "Mục tiêu tâm lý của <b>Tính mới lạ (Novelty)</b> là gì?",
+        explain: "Novelty chỉ cần kéo sự chú ý và phá cảm giác đơn điệu. Giữ chân lâu dài là việc của cảm giác thành thạo, không phải của tính mới lạ."
+      },
+      {
+        lever: "complexity",
+        row: "knob",
+        rowLabel: "Cách vặn nút",
+        prompt: "Để <b>vặn nút Độ phức tạp (Complexity)</b>, người thiết kế cần làm gì?",
+        explain: "Thêm cơ chế mới và để các quy tắc tác động lẫn nhau sẽ tăng lượng phải xử lý, buộc người chơi tìm ra cách chơi mới."
+      },
+      {
+        lever: "variety",
+        row: "standard",
+        rowLabel: "Chuẩn mực",
+        prompt: "<b>Chuẩn mực nên làm</b> với <b>Tính đa dạng (Variety)</b> là gì?",
+        explain: "Hãy khai thác hết các tổ hợp cũ trước khi làm cơ chế mới — vừa đỡ tốn chi phí sản xuất, vừa giữ được độ tươi cho từng màn."
+      },
+      {
+        lever: "difficulty",
+        row: "taboo",
+        rowLabel: "Cấm kỵ",
+        prompt: "<b>Cấm kỵ</b> khi dùng <b>Độ khó (Difficulty)</b> là gì?",
+        explain: "Độ khó phải minh bạch và có dốc lấy đà. Tăng đột ngột hay dùng sự mơ hồ chỉ tạo ức chế, không tạo ra thử thách công bằng."
+      }
+    ];
+
+    let lqState = null;
+    const lqModal = document.getElementById("levers-quiz-modal");
+    const lqCard = document.getElementById("lq-card");
+
+    function lqFreshState() {
+      return {
+        step: 0,
+        score: 0,
+        results: Array(LQ_QUESTIONS.length).fill(null),
+        stepStarted: false,
+        resolution: null,
+        wrongIndices: [],
+        partialFeedback: null,
+        options: [],
+        attempts: 0,
+        finished: false
+      };
+    }
+
+    function lqGetTable() {
+      return document.getElementById("levers-quiz-table");
+    }
+
+    function lqRowTexts(rowKey) {
+      const table = lqGetTable();
+      const texts = {};
+      if (!table) return texts;
+      table.querySelectorAll(`tr[data-quiz-row="${rowKey}"] td[data-lever]`).forEach(td => {
+        texts[td.dataset.lever] = td.textContent.replace(/\s+/g, " ").trim();
+      });
+      return texts;
+    }
+
+    function lqShuffle(items) {
+      const copy = items.slice();
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function lqLockRow(rowKey) {
+      const table = lqGetTable();
+      if (!table) return;
+      table.querySelectorAll("td.quiz-cell-correct").forEach(td => td.classList.remove("quiz-cell-correct"));
+      const row = table.querySelector(`tr[data-quiz-row="${rowKey}"]`);
+      if (row) row.classList.add("quiz-row-locked");
+    }
+
+    function lqRevealRow(question, highlightCorrect) {
+      const table = lqGetTable();
+      if (!table) return;
+      const row = table.querySelector(`tr[data-quiz-row="${question.row}"]`);
+      if (!row) return;
+      row.classList.remove("quiz-row-locked");
+      row.querySelectorAll("td[data-lever]").forEach(td => {
+        td.classList.toggle("quiz-cell-correct", highlightCorrect && td.dataset.lever === question.lever);
+      });
+    }
+
+    function lqResetTable() {
+      const table = lqGetTable();
+      if (!table) return;
+      table.querySelectorAll("tr[data-quiz-row]").forEach(tr => tr.classList.add("quiz-row-locked"));
+      table.querySelectorAll("td.quiz-cell-correct").forEach(td => td.classList.remove("quiz-cell-correct"));
+    }
+
+    function lqRevealAllRows() {
+      const table = lqGetTable();
+      if (!table) return;
+      table.querySelectorAll("tr.quiz-row-locked").forEach(tr => tr.classList.remove("quiz-row-locked"));
+    }
+
+    function lqHighlightAllAnswers() {
+      const table = lqGetTable();
+      if (!table) return;
+      LQ_QUESTIONS.forEach(question => {
+        const cell = table.querySelector(`tr[data-quiz-row="${question.row}"] td[data-lever="${question.lever}"]`);
+        if (cell) cell.classList.add("quiz-cell-correct");
+      });
+    }
+
+    function lqUpdateBar() {
+      const bar = document.getElementById("levers-quiz-bar");
+      if (!bar) return;
+      const status = document.getElementById("levers-quiz-status");
+      const startBtn = document.getElementById("levers-quiz-start");
+      const chips = bar.querySelectorAll(".lq-chip");
+
+      if (!lqState) {
+        if (status) status.textContent = "Bảng đã được giấu • 4 câu hỏi • Bấm bắt đầu để dò bài!";
+        if (startBtn) startBtn.textContent = "▶ Bắt đầu";
+        chips.forEach(chip => chip.classList.remove("is-current", "is-done"));
+        return;
+      }
+
+      if (lqState.finished) {
+        if (status) status.textContent = `Hoàn thành 4/4 câu • ${lqState.score}/4 ⭐ • Bấm để chơi lại`;
+        if (startBtn) startBtn.textContent = "↻ Chơi lại";
+      } else {
+        const q = LQ_QUESTIONS[lqState.step];
+        const meta = LQ_LEVER_META[q.lever];
+        if (status) status.textContent = `Câu ${lqState.step + 1}/4 • ${q.rowLabel} của ${meta.name} (${meta.en})`;
+        if (startBtn) startBtn.textContent = "▶ Tiếp tục";
+      }
+
+      chips.forEach((chip, idx) => {
+        const done = Boolean(lqState.results[idx]);
+        chip.classList.toggle("is-done", done);
+        chip.classList.toggle("is-current", !lqState.finished && idx === lqState.step && !done);
+      });
+    }
+
+    function lqBeginStep() {
+      const q = LQ_QUESTIONS[lqState.step];
+      lqState.stepStarted = true;
+      lqState.resolution = null;
+      lqState.wrongIndices = [];
+      lqState.partialFeedback = null;
+      lqState.attempts = 0;
+      const texts = lqRowTexts(q.row);
+      lqState.options = lqShuffle(
+        Object.keys(LQ_LEVER_META).map(key => ({ key, text: texts[key] || "" }))
+      );
+      lqLockRow(q.row);
+    }
+
+    function lqRenderQuestion() {
+      const q = LQ_QUESTIONS[lqState.step];
+      const meta = LQ_LEVER_META[q.lever];
+      const resolution = lqState.resolution;
+      const feedback = resolution
+        ? { kind: resolution.feedbackKind, html: resolution.feedbackHtml }
+        : lqState.partialFeedback;
+
+      const optionButtons = lqState.options.map((opt, idx) => {
+        const classes = ["lq-answer"];
+        let disabled = false;
+        if (resolution) {
+          if (idx === resolution.correctIndex) classes.push("is-correct");
+          else if (resolution.wrongIndices.includes(idx)) classes.push("is-wrong");
+          else classes.push("is-dim");
+          disabled = true;
+        } else if (lqState.wrongIndices.includes(idx)) {
+          classes.push("is-wrong");
+          disabled = true;
+        }
+        return `
+          <button type="button" class="${classes.join(" ")}" data-lq-answer="${idx}" ${disabled ? "disabled" : ""}>
+            <span class="lq-key">${String.fromCharCode(65 + idx)}</span>
+            <span>${opt.text}</span>
+          </button>
+        `;
+      }).join("");
+
+      lqCard.style.setProperty("--lq-accent", meta.lip);
+      lqCard.innerHTML = `
+        <div class="lq-modal-top">
+          <span class="lq-lever-badge" style="background:${meta.soft}; color:${meta.lip}; border-color:${meta.color};">
+            <span aria-hidden="true">${meta.icon}</span>
+            <span>${meta.name}</span>
+            <span class="lq-en">${meta.en}</span>
+          </span>
+          <span class="lq-progress-pill">Câu ${lqState.step + 1} / ${LQ_QUESTIONS.length}</span>
+          <span class="lq-score-pill">⭐ <b>${lqState.score}</b> điểm</span>
+          <button type="button" class="lq-close" data-lq-action="close" aria-label="Tạm dừng, quay lại bảng">✕</button>
+        </div>
+        <h3 class="lq-question" id="lq-question">${q.prompt}</h3>
+        <div class="lq-answers" role="group" aria-labelledby="lq-question">${optionButtons}</div>
+        <div class="lq-feedback${feedback ? " show " + feedback.kind : ""}" role="status" aria-live="polite">${feedback ? feedback.html : ""}</div>
+        <div class="lq-actions">
+          ${resolution ? "<span></span>" : '<button type="button" class="lq-skip" data-lq-action="skip">Bỏ qua câu này</button>'}
+          <button type="button" class="lq-next" data-lq-action="next" ${resolution ? "" : "disabled"}>Tiếp tục →</button>
+        </div>
+      `;
+    }
+
+    function lqOpenQuestion() {
+      if (!lqState || lqState.finished) return;
+      lqModal.querySelectorAll(".lq-confetti").forEach(el => el.remove());
+      if (!lqState.stepStarted) lqBeginStep();
+      lqRenderQuestion();
+      lqModal.classList.add("open");
+      lqUpdateBar();
+      setTimeout(() => {
+        const target = lqState && lqState.resolution
+          ? lqModal.querySelector('[data-lq-action="next"]')
+          : lqModal.querySelector(".lq-answer:not(:disabled)");
+        if (target) target.focus({ preventScroll: true });
+      }, 60);
+    }
+
+    function lqAnswer(index) {
+      if (!lqState || lqState.finished || lqState.resolution) return;
+      const opt = lqState.options[index];
+      if (!opt) return;
+      const q = LQ_QUESTIONS[lqState.step];
+      const meta = LQ_LEVER_META[opt.key];
+      const qMeta = LQ_LEVER_META[q.lever];
+      const button = lqModal.querySelector(`[data-lq-answer="${index}"]`);
+      if (!button || button.disabled) return;
+
+      if (opt.key === q.lever) {
+        const firstTry = lqState.attempts === 0;
+        if (firstTry) lqState.score += 1;
+        lqState.results[lqState.step] = firstTry ? "first" : "retry";
+        lqState.resolution = {
+          correctIndex: index,
+          wrongIndices: lqState.wrongIndices.slice(),
+          feedbackKind: "ok",
+          feedbackHtml: firstTry
+            ? `<b>🎉 Chính xác! +1 ⭐</b> ${q.explain}`
+            : `<b>✅ Đúng rồi!</b> Câu này không tính điểm vì đã thử lại. ${q.explain}`
+        };
+        lqState.partialFeedback = null;
+        lqRevealRow(q, true);
+        lqRenderQuestion();
+        lqUpdateBar();
+        if (firstTry) lqBurstConfetti();
+        setTimeout(() => {
+          const next = lqModal.querySelector('[data-lq-action="next"]');
+          if (next) next.focus({ preventScroll: true });
+        }, 40);
+      } else {
+        lqState.attempts += 1;
+        lqState.wrongIndices.push(index);
+        lqState.partialFeedback = {
+          kind: "no",
+          html: `<b>❌ Chưa đúng.</b> “${opt.text}” đang mô tả <b>${meta.name} (${meta.en})</b>, không phải <b>${qMeta.name}</b>. Thử chọn lại nhé!`
+        };
+        button.classList.add("is-wrong");
+        button.disabled = true;
+        const feedbackEl = lqModal.querySelector(".lq-feedback");
+        if (feedbackEl) {
+          feedbackEl.className = "lq-feedback show no";
+          feedbackEl.innerHTML = lqState.partialFeedback.html;
+        }
+      }
+    }
+
+    function skipLeversQuizQuestion() {
+      if (!lqState || lqState.finished || lqState.resolution) return;
+      const q = LQ_QUESTIONS[lqState.step];
+      const correctIndex = lqState.options.findIndex(opt => opt.key === q.lever);
+      const correctText = lqState.options[correctIndex]
+        ? lqState.options[correctIndex].text
+        : lqRowTexts(q.row)[q.lever];
+      lqState.results[lqState.step] = "skip";
+      lqState.resolution = {
+        correctIndex,
+        wrongIndices: lqState.wrongIndices.slice(),
+        feedbackKind: "skip",
+        feedbackHtml: `<b>⏭️ Đã bỏ qua.</b> Đáp án đúng: “<b>${correctText}</b>”. ${q.explain}`
+      };
+      lqState.partialFeedback = null;
+      lqRevealRow(q, true);
+      lqRenderQuestion();
+      lqUpdateBar();
+      setTimeout(() => {
+        const next = lqModal.querySelector('[data-lq-action="next"]');
+        if (next) next.focus({ preventScroll: true });
+      }, 40);
+    }
+
+    function lqRenderSummary() {
+      const score = lqState.score;
+      const total = LQ_QUESTIONS.length;
+      const stars = "⭐".repeat(score) + "☆".repeat(total - score);
+      let title = "Hoàn thành thử thách!";
+      let msg = "";
+
+      if (score === total) {
+        title = "Trùm cuối đòn bẩy!";
+        msg = "Bạn nhớ như in cả bốn nút vặn. Giờ hãy mang bảng này vào phòng thiết kế và vặn đúng nút cho từng màn.";
+      } else if (score >= 3) {
+        title = "Rất chắc tay!";
+        msg = "Chỉ cần ôn lại một nút vặn là bạn đã nắm trọn cả bảng. Xem lại hàng còn thiếu rồi thử lại nhé.";
+      } else if (score >= 1) {
+        title = "Ổn áp rồi!";
+        msg = "Bạn đã nhớ được một phần. Bảng ma trận vẫn ở ngay sau lưng — xem lại các hàng còn lại rồi chơi lại để khắc sâu.";
+      } else {
+        title = "Khởi động lại nào!";
+        msg = "Không sao — thử thách này để học, không phải để loại. Mở bảng xem lại một lượt rồi chơi lại nhé.";
+      }
+
+      lqCard.style.setProperty("--lq-accent", "var(--good-lip)");
+      lqCard.innerHTML = `
+        <div class="lq-summary">
+          <div class="lq-summary-badge" aria-hidden="true">${score === total ? "🏆" : score >= 2 ? "🎮" : "💪"}</div>
+          <h3>${title}</h3>
+          <div class="lq-stars" aria-label="${score} trên ${total} điểm">${stars}</div>
+          <div class="lq-score-big"><b>${score}</b> / ${total} ⭐</div>
+          <p class="lq-summary-msg">${msg}</p>
+          <div class="lq-summary-actions">
+            <button type="button" class="lq-next" data-lq-action="restart">↻ Chơi lại</button>
+            <button type="button" class="lq-skip" data-lq-action="close">Đóng, xem lại bảng</button>
+          </div>
+        </div>
+      `;
+      setTimeout(() => {
+        const restart = lqModal.querySelector('[data-lq-action="restart"]');
+        if (restart) restart.focus({ preventScroll: true });
+      }, 40);
+    }
+
+    function nextLeversQuizQuestion() {
+      if (!lqState || !lqState.resolution) return;
+      if (lqState.step < LQ_QUESTIONS.length - 1) {
+        lqState.step += 1;
+        lqState.stepStarted = false;
+        lqOpenQuestion();
+        return;
+      }
+      lqState.finished = true;
+      lqState.resolution = null;
+      lqState.partialFeedback = null;
+      lqRevealAllRows();
+      lqHighlightAllAnswers();
+      lqUpdateBar();
+      lqRenderSummary();
+      lqBurstConfetti();
+    }
+
+    function restartLeversQuiz() {
+      lqResetTable();
+      lqState = lqFreshState();
+      lqUpdateBar();
+      lqOpenQuestion();
+    }
+
+    function closeLeversQuiz() {
+      lqModal.classList.remove("open");
+      lqModal.querySelectorAll(".lq-confetti").forEach(el => el.remove());
+      lqUpdateBar();
+      const startBtn = document.getElementById("levers-quiz-start");
+      if (startBtn) startBtn.focus({ preventScroll: true });
+    }
+
+    function lqBurstConfetti() {
+      if (!lqModal) return;
+      const pieces = ["⭐", "✨", "🎉", "💫", "🎊"];
+      for (let i = 0; i < 20; i += 1) {
+        const piece = document.createElement("span");
+        piece.className = "lq-confetti";
+        piece.textContent = pieces[i % pieces.length];
+        piece.style.left = `${35 + Math.random() * 30}%`;
+        piece.style.top = `${28 + Math.random() * 18}%`;
+        piece.style.fontSize = `${15 + Math.random() * 17}px`;
+        piece.style.setProperty("--dx", `${(Math.random() - 0.5) * 620}px`);
+        piece.style.setProperty("--dy", `${-40 - Math.random() * 260}px`);
+        piece.style.setProperty("--rot", `${(Math.random() - 0.5) * 760}deg`);
+        piece.style.animationDelay = `${Math.random() * 0.1}s`;
+        lqModal.appendChild(piece);
+        setTimeout(() => piece.remove(), 1500);
+      }
+    }
+
+    function startLeversQuiz() {
+      if (lqState && !lqState.finished) {
+        lqOpenQuestion();
+        return;
+      }
+      lqResetTable();
+      lqState = lqFreshState();
+      lqUpdateBar();
+      lqOpenQuestion();
+    }
+
+    if (lqModal) {
+      lqModal.addEventListener("click", event => {
+        const answer = event.target.closest("[data-lq-answer]");
+        if (answer) {
+          lqAnswer(parseInt(answer.getAttribute("data-lq-answer"), 10));
+          return;
+        }
+        const action = event.target.closest("[data-lq-action]");
+        if (action) {
+          const name = action.getAttribute("data-lq-action");
+          if (name === "close") closeLeversQuiz();
+          else if (name === "skip") skipLeversQuizQuestion();
+          else if (name === "next") nextLeversQuizQuestion();
+          else if (name === "restart") restartLeversQuiz();
+          return;
+        }
+        if (event.target === lqModal) closeLeversQuiz();
+      });
+    }
+
     function openCustomLightbox(src, caption) {
       src = resolveAsset(src);
       const cleanCaption = stripSourceLabels(caption);
@@ -7075,6 +8101,37 @@
     }
 
     window.addEventListener("keydown", (e) => {
+      if (lqModal && lqModal.classList.contains("open")) {
+        if (e.key === "Escape") {
+          closeLeversQuiz();
+          return;
+        }
+        if (["1", "2", "3", "4"].includes(e.key)) {
+          e.preventDefault();
+          const index = parseInt(e.key, 10) - 1;
+          const button = lqModal.querySelector(`[data-lq-answer="${index}"]`);
+          if (button && !button.disabled) lqAnswer(index);
+          return;
+        }
+        if (e.key === "Enter") {
+          const focusedButton = e.target && e.target.closest ? e.target.closest("button") : null;
+          const next = lqModal.querySelector('[data-lq-action="next"]');
+          if (!focusedButton && next && !next.disabled) {
+            e.preventDefault();
+            nextLeversQuizQuestion();
+          }
+          return;
+        }
+        if (["ArrowRight", "ArrowLeft", "PageDown", "PageUp"].includes(e.key)) {
+          e.preventDefault();
+          return;
+        }
+        if (e.key === " ") {
+          const focusedButton = e.target && e.target.closest ? e.target.closest("button") : null;
+          if (!focusedButton) e.preventDefault();
+        }
+        return;
+      }
       if (lightboxModal.classList.contains("open")) {
         if (e.key === "Escape") closeLightbox();
         return;
@@ -7109,6 +8166,7 @@
 
     window.softEngine = new SoftSurface3DEngine(elasticCanvas, deckCanvas);
     initDeck();
+    lqResetTable();
   </script>
 </body>
 
