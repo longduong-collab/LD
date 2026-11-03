@@ -516,6 +516,7 @@
     .phone-showcase {
       display: grid;
       grid-template-columns: 1fr 0.95fr 1fr;
+      grid-template-rows: minmax(0, 1fr);
       gap: calc(16 * var(--u));
       align-items: stretch;
       width: 100%;
@@ -719,6 +720,41 @@
 
       .vs-badge {
         margin: 4px auto;
+      }
+    }
+
+    /* Landscape / 150% browser zoom: keep the phone showcase in its 3-column form */
+    @media (min-width: 761px) and (min-aspect-ratio: 1/1) {
+      .phone-showcase {
+        grid-template-columns: 1fr 0.95fr 1fr !important;
+      }
+    }
+
+    @media (max-height: 700px) and (min-width: 761px) and (min-aspect-ratio: 1/1) {
+      .phone-rule-card {
+        min-height: 0;
+        padding: calc(8 * var(--u)) calc(12 * var(--u));
+        gap: calc(3 * var(--u));
+      }
+
+      .phone-rule-title {
+        font-size: max(17px, calc(24 * var(--u)));
+        line-height: 1.1;
+      }
+
+      .phone-rule-desc {
+        font-size: max(13px, calc(16 * var(--u)));
+        line-height: 1.25;
+        margin-top: calc(1 * var(--u));
+      }
+
+      .phone-col {
+        gap: calc(6 * var(--u));
+        min-height: 0;
+      }
+
+      .phone-col-tag {
+        font-size: max(12px, calc(14 * var(--u)));
       }
     }
 
@@ -946,6 +982,46 @@
       font-size: clamp(14px, 1.12vw, 17.5px);
       color: var(--nov-main);
       font-weight: 700;
+    }
+
+    /* Short viewports / 150% browser zoom: compact the notes so they fit without spilling */
+    @media (max-height: 560px) {
+      #notes-drawer {
+        bottom: 48px;
+        padding: 12px 18px;
+        max-height: 56vh;
+      }
+
+      .notes-header {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+        font-size: 16px;
+      }
+
+      #notes-content {
+        font-size: 12.5px;
+        line-height: 1.4;
+      }
+
+      #notes-content .notes-lead {
+        font-size: 13.5px;
+        margin-bottom: 6px;
+      }
+
+      #notes-content ul {
+        padding-left: 16px;
+        gap: 4px;
+      }
+
+      #notes-content li {
+        line-height: 1.38;
+      }
+
+      #notes-bridge {
+        margin-top: 6px;
+        padding-top: 6px;
+        font-size: 12.5px;
+      }
     }
 
     /* Overview Modal (Key O) */
@@ -2805,6 +2881,69 @@
       object-fit: cover;
       object-position: center 72%;
       display: block;
+    }
+
+    .mixer-fader {
+      height: calc(220 * var(--u));
+    }
+
+    /* Short viewports / 150% browser zoom: keep the mixer cards from spilling into the photo */
+    @media (max-height: 820px) {
+      .slide[data-layout="s05_mixer_levers"] .mixer-grid {
+        grid-template-rows: minmax(0, 1.45fr) minmax(0, 0.55fr);
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .candy-card {
+        gap: 4px;
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .mixer-fader {
+        height: calc(170 * var(--u));
+      }
+    }
+
+    /* Very short landscape viewports (e.g. 1366×768 at 150% zoom) */
+    @media (max-height: 560px) {
+      .slide[data-layout="s05_mixer_levers"] .candy-card {
+        padding: calc(8 * var(--u)) calc(10 * var(--u));
+        gap: 3px;
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .mixer-fader {
+        height: calc(130 * var(--u));
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .candy-card > div:first-child > span:last-child {
+        font-size: clamp(22px, 2vw, 30px) !important;
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .candy-card .card-title {
+        font-size: clamp(15px, 1.3vw, 19px) !important;
+        line-height: 1.1 !important;
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .candy-card .card-body {
+        font-size: clamp(11.5px, 0.95vw, 13.5px) !important;
+        line-height: 1.22 !important;
+      }
+
+      .slide[data-layout="s05_mixer_levers"] .candy-card > .candy-pill {
+        font-size: clamp(10px, 0.85vw, 12px) !important;
+        padding: 2px 10px !important;
+      }
+    }
+
+    /* Short viewports: let slide 33's chart and bottom cards shrink without pushing past the footer */
+    @media (max-height: 950px) {
+      .cg-chart,
+      .cg-bottom,
+      .cg-bottom > .tile {
+        min-height: 0;
+      }
+    }
+
+    .cg-phases {
+      font-size: clamp(11px, 1vw, 20px);
     }
 
     /* ==== Slide 7: Stress Stacking — ảnh bên trái, lí giải + hint bên phải ==== */
@@ -5354,7 +5493,7 @@
                   <div class="card-title" style="font-size:clamp(20px, 1.7vw, 26px);">${l.vn}</div>
                   <div style="font-size:clamp(12.5px, 1vw, 14.5px); font-weight:800; color:${l.lip};">${l.name}</div>
                 </div>
-                <svg viewBox="0 0 54 200" style="width:calc(60 * var(--u)); height:calc(220 * var(--u)); display:block; margin:calc(4 * var(--u)) auto; flex-shrink:0;">
+                <svg class="mixer-fader" viewBox="0 0 54 200" style="width:calc(60 * var(--u)); display:block; margin:calc(4 * var(--u)) auto; flex-shrink:0;">
                   <rect x="22" y="18" width="10" height="164" rx="5" fill="#241C35"/>
                   <rect x="22" y="${18 + (164 - h)}" width="10" height="${h}" rx="5" fill="${l.color}"/>
                   <rect x="8" y="${168 - h}" width="38" height="28" rx="8" fill="#FFFFFF" stroke="#241C35" stroke-width="4"/>
@@ -6532,7 +6671,7 @@
           stage = `
             ${topBar}
             <div class="slide-stage" style="gap:12px;">
-              <div class="tile anim" style="flex:1.8; padding:12px 30px; justify-content:space-between; background:#FDF5E8;">
+              <div class="tile anim cg-chart" style="flex:1.8; padding:12px 30px; justify-content:space-between; background:#FDF5E8;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
                   <span class="card-title">Bốn đòn bẩy trên cả vòng đời: chỗ nào cùng lên đỉnh là chỗ dễ mất người chơi.</span>
                   <span class="tag" style="background:var(--bad-main); color:#FFFFFF;">⚠️ Điểm chết: xếp chồng áp lực</span>
@@ -6544,7 +6683,7 @@
                          style="max-width:100%; max-height:100%; width:auto; height:auto; display:block;" />
                     <span style="position:absolute; top:1.5%; left:52.5%; transform:translateX(-50%); background:#FFF9F0; color:#B81D3A; border:2px solid #E11D48; border-radius:999px; padding:2px 12px; font-family:'Baloo 2',cursive; font-size:clamp(12px, 1.05vw, 16px); font-weight:800; white-space:nowrap; box-shadow:0 2px 0 rgba(38,31,54,.15);">⚠️ Bốn đỉnh trùng nhau!</span>
                   </div>
-                  <div style="position:relative; height:calc(30 * var(--u)); flex-shrink:0; font-family:'Baloo 2',cursive; font-size:clamp(14px, 1.25vw, 20px); font-weight:800; color:var(--ink-muted);">
+                  <div class="cg-phases" style="position:relative; height:calc(30 * var(--u)); flex-shrink:0; font-family:'Baloo 2',cursive; font-weight:800; color:var(--ink-muted);">
                     <span style="position:absolute; left:14%; transform:translateX(-50%);">1. Khám phá</span>
                     <span style="position:absolute; left:28%; transform:translateX(-50%);">2. Làm quen</span>
                     <span style="position:absolute; left:40.5%; transform:translateX(-50%);">3. Dựng nền</span>
@@ -6554,7 +6693,7 @@
                 </div>
               </div>
 
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; flex:0.45;">
+              <div class="cg-bottom" style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; flex:0.45;">
                 <div class="tile tile-good anim">
                   <div class="card-title" style="color:#0F6B30;">✅ LUYỆN TẬP CÓ CHỦ ĐÍCH</div>
                   <div class="card-body">Lặp lại giúp người chơi nhìn ra thế cờ ngay và củng cố cảm giác mình đã thành thạo.</div>
